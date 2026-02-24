@@ -71,27 +71,41 @@ export default function Canvas() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [cyclePlacementRotation]);
 
-  // Zoom with mouse wheel
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
+  // Zoom with mouse wheel — use refs to avoid stale closures
+  const zoomRef = useRef(zoom);
+  zoomRef.current = zoom;
+  const panRef = useRef(pan);
+  panRef.current = pan;
+
+  useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const rect = container.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
 
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom * delta));
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
-    // Zoom towards mouse position
-    const scale = newZoom / zoom;
-    const newPanX = mouseX - (mouseX - pan.x) * scale;
-    const newPanY = mouseY - (mouseY - pan.y) * scale;
+      const currentZoom = zoomRef.current;
+      const currentPan = panRef.current;
 
-    setZoom(newZoom);
-    setPan({ x: newPanX, y: newPanY });
-  }, [zoom, pan]);
+      const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentZoom * delta));
+
+      // Zoom towards mouse position
+      const scale = newZoom / currentZoom;
+      const newPanX = mouseX - (mouseX - currentPan.x) * scale;
+      const newPanY = mouseY - (mouseY - currentPan.y) * scale;
+
+      setZoom(newZoom);
+      setPan({ x: newPanX, y: newPanY });
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, []);
 
   // Pan with middle mouse button or space+drag
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -191,7 +205,6 @@ export default function Canvas() {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
       onContextMenu={handleContextMenu}
-      onWheel={handleWheel}
     >
       <div
         className="relative origin-top-left"
