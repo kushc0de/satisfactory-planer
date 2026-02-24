@@ -10,7 +10,7 @@ import { calcOverclockedPower } from '../../engine/overclock';
 import { useStore } from '../../store/store';
 import type {
   SolverResult, SolverStep, MkLevel, Purity, PlacedBuilding, Connection,
-  ConnectionKind, ResourceConfig, BuildingType, ProductionRate,
+  ConnectionKind, PipeMk, ResourceConfig, BuildingType, ProductionRate,
 } from '../../types';
 
 const PRODUCIBLE_ITEMS = Object.values(ITEMS)
@@ -237,8 +237,17 @@ export default function SolverPanel({ onClose }: { onClose: () => void }) {
       });
     }
 
-    useStore.getState().loadBuildings([...currentBuildings, ...newBuildings]);
-    useStore.getState().loadConnections([...currentConnections, ...newConnections]);
+    // Batch both updates into a single store mutation to avoid cascading re-renders
+    // (two separate set() calls via useSyncExternalStore can exceed React's update depth limit)
+    const migratedConnections = [...currentConnections, ...newConnections].map((c) => ({
+      ...c,
+      pipeMk: c.pipeMk ?? (1 as PipeMk),
+      connectionKind: c.connectionKind ?? ('belt' as ConnectionKind),
+    }));
+    useStore.setState({
+      buildings: [...currentBuildings, ...newBuildings],
+      connections: migratedConnections,
+    });
 
     onClose();
   };
