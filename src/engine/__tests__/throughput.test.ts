@@ -11,6 +11,8 @@ const makeMiner = (id: string, mkLevel: 1 | 2 | 3, purity: 'impure' | 'normal' |
   overclock,
   purity,
   recipeId: null,
+  rotation: 0,
+  oreType: null,
 });
 
 const makeConnection = (id: string, fromId: string, toId: string, beltMk: 1 | 2 | 3 | 4 | 5 | 6 = 1): Connection => ({

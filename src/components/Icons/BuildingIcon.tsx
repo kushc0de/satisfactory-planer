@@ -1,6 +1,9 @@
 import type { BuildingType } from '../../types';
 
-const ICON_CONFIGS: Record<BuildingType, { color: string; shape: 'pickaxe' | 'flame' | 'gear' | 'gears' | 'foundry' | 'split' | 'merge' }> = {
+type ShapeType = 'pickaxe' | 'flame' | 'gear' | 'gears' | 'foundry' | 'split' | 'merge'
+  | 'manufacturer' | 'refinery' | 'packager' | 'blender' | 'particle';
+
+const ICON_CONFIGS: Record<BuildingType, { color: string; shape: ShapeType }> = {
   miner: { color: '#F59E0B', shape: 'pickaxe' },
   smelter: { color: '#EF4444', shape: 'flame' },
   constructor: { color: '#3B82F6', shape: 'gear' },
@@ -8,6 +11,11 @@ const ICON_CONFIGS: Record<BuildingType, { color: string; shape: 'pickaxe' | 'fl
   foundry: { color: '#F97316', shape: 'foundry' },
   splitter: { color: '#10B981', shape: 'split' },
   merger: { color: '#06B6D4', shape: 'merge' },
+  manufacturer: { color: '#A855F7', shape: 'manufacturer' },
+  refinery: { color: '#FB923C', shape: 'refinery' },
+  packager: { color: '#22D3EE', shape: 'packager' },
+  blender: { color: '#84CC16', shape: 'blender' },
+  particle_accelerator: { color: '#EC4899', shape: 'particle' },
 };
 
 interface Props {
@@ -72,6 +80,53 @@ export default function BuildingIcon({ type, size = 32 }: Props) {
           <line x1="6" y1="16" x2="16" y2="16" stroke={config.color} strokeWidth="2" strokeLinecap="round" />
           <line x1="6" y1="24" x2="16" y2="16" stroke={config.color} strokeWidth="2" strokeLinecap="round" />
           <line x1="16" y1="16" x2="26" y2="16" stroke={config.color} strokeWidth="2" strokeLinecap="round" />
+        </>
+      )}
+      {/* Manufacturer — 4 input arrows into a box */}
+      {config.shape === 'manufacturer' && (
+        <>
+          <rect x="12" y="8" width="14" height="16" rx="2" stroke={config.color} strokeWidth="1.5" fill={config.color + '33'} />
+          {[11, 14, 17, 20].map((y) => (
+            <line key={y} x1="5" y1={y} x2="12" y2={y} stroke={config.color} strokeWidth="1.5" strokeLinecap="round" />
+          ))}
+          <circle cx="19" cy="16" r="3" fill={config.color} fillOpacity="0.5" />
+        </>
+      )}
+      {/* Refinery — distillation tower */}
+      {config.shape === 'refinery' && (
+        <>
+          <rect x="10" y="6" width="12" height="20" rx="2" stroke={config.color} strokeWidth="1.5" fill={config.color + '33'} />
+          <line x1="10" y1="12" x2="22" y2="12" stroke={config.color} strokeWidth="1" />
+          <line x1="10" y1="18" x2="22" y2="18" stroke={config.color} strokeWidth="1" />
+          <circle cx="16" cy="9" r="1.5" fill={config.color} />
+          <circle cx="16" cy="15" r="1.5" fill={config.color} />
+          <circle cx="16" cy="21" r="1.5" fill={config.color} />
+        </>
+      )}
+      {/* Packager — box with lid */}
+      {config.shape === 'packager' && (
+        <>
+          <rect x="8" y="12" width="16" height="12" rx="2" stroke={config.color} strokeWidth="1.5" fill={config.color + '33'} />
+          <path d="M8 12L12 8H20L24 12" stroke={config.color} strokeWidth="1.5" strokeLinejoin="round" />
+          <line x1="16" y1="8" x2="16" y2="24" stroke={config.color} strokeWidth="1" strokeDasharray="2 2" />
+        </>
+      )}
+      {/* Blender — mixing vessel */}
+      {config.shape === 'blender' && (
+        <>
+          <path d="M10 8L8 24H24L22 8Z" stroke={config.color} strokeWidth="1.5" fill={config.color + '33'} strokeLinejoin="round" />
+          <line x1="16" y1="10" x2="16" y2="22" stroke={config.color} strokeWidth="1.5" />
+          <line x1="12" y1="14" x2="20" y2="14" stroke={config.color} strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="13" y1="18" x2="19" y2="18" stroke={config.color} strokeWidth="1.5" strokeLinecap="round" />
+        </>
+      )}
+      {/* Particle Accelerator — atom symbol */}
+      {config.shape === 'particle' && (
+        <>
+          <circle cx="16" cy="16" r="3" fill={config.color} fillOpacity="0.6" />
+          <ellipse cx="16" cy="16" rx="10" ry="4" stroke={config.color} strokeWidth="1.5" fill="none" />
+          <ellipse cx="16" cy="16" rx="10" ry="4" stroke={config.color} strokeWidth="1.5" fill="none" transform="rotate(60 16 16)" />
+          <ellipse cx="16" cy="16" rx="10" ry="4" stroke={config.color} strokeWidth="1.5" fill="none" transform="rotate(120 16 16)" />
         </>
       )}
     </svg>

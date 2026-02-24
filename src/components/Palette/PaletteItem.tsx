@@ -19,7 +19,7 @@ export default function PaletteItem({ building }: Props) {
     if (isActive) {
       setPlacementMode(null);
     } else {
-      setPlacementMode({ kind: 'building', buildingType: building.type });
+      setPlacementMode({ kind: 'building', buildingType: building.type, rotation: 0 });
     }
   };
 

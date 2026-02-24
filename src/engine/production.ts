@@ -51,9 +51,10 @@ export function calcBuildingProduction(
 ): { inputs: ProductionRate[]; outputs: ProductionRate[] } {
   if (building.type === 'miner') {
     const rate = calcMinerOutput(building.mkLevel, building.purity, building.overclock);
+    const itemId = building.oreType ?? 'iron_ore';
     return {
       inputs: [],
-      outputs: [{ itemId: 'ore', rate }],
+      outputs: [{ itemId, rate }],
     };
   }
 

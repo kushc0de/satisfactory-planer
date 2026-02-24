@@ -1,17 +1,31 @@
-import type { BuildingDef } from '../types';
+import type { BuildingDef, BuildingType, PortDefinition } from '../types';
 
-export const BUILDINGS = {
+// Helper to create conveyor port definitions
+function convIn(side: PortDefinition['side'], offset: number): PortDefinition {
+  return { type: 'input', side, category: 'conveyor', offset };
+}
+function convOut(side: PortDefinition['side'], offset: number): PortDefinition {
+  return { type: 'output', side, category: 'conveyor', offset };
+}
+function pipeIn(side: PortDefinition['side'], offset: number): PortDefinition {
+  return { type: 'input', side, category: 'pipe', offset };
+}
+function pipeOut(side: PortDefinition['side'], offset: number): PortDefinition {
+  return { type: 'output', side, category: 'pipe', offset };
+}
+
+export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   miner: {
     type: 'miner',
     label: 'Förderer',
     description: 'Fördert Rohstoffe aus Ressourcenknoten',
     basePower: 5,
     maxMkLevel: 3,
-    inputCount: 0,
-    outputCount: 1,
+    ports: [convOut('right', 0.5)],
     isLogistics: false,
     gridWidth: 1,
     gridHeight: 2,
+    category: 'extraction',
   },
   smelter: {
     type: 'smelter',
@@ -19,11 +33,11 @@ export const BUILDINGS = {
     description: 'Schmilzt Erze zu Barren',
     basePower: 4,
     maxMkLevel: 1,
-    inputCount: 1,
-    outputCount: 1,
+    ports: [convIn('left', 0.5), convOut('right', 0.5)],
     isLogistics: false,
     gridWidth: 1,
     gridHeight: 2,
+    category: 'smelting',
   },
   constructor: {
     type: 'constructor',
@@ -31,11 +45,11 @@ export const BUILDINGS = {
     description: 'Fertigt Bauteile aus einem Eingang',
     basePower: 4,
     maxMkLevel: 1,
-    inputCount: 1,
-    outputCount: 1,
+    ports: [convIn('left', 0.5), convOut('right', 0.5)],
     isLogistics: false,
     gridWidth: 1,
     gridHeight: 2,
+    category: 'production',
   },
   assembler: {
     type: 'assembler',
@@ -43,11 +57,11 @@ export const BUILDINGS = {
     description: 'Kombiniert zwei Materialien',
     basePower: 15,
     maxMkLevel: 1,
-    inputCount: 2,
-    outputCount: 1,
+    ports: [convIn('left', 0.33), convIn('left', 0.67), convOut('right', 0.5)],
     isLogistics: false,
     gridWidth: 2,
     gridHeight: 2,
+    category: 'production',
   },
   foundry: {
     type: 'foundry',
@@ -55,11 +69,11 @@ export const BUILDINGS = {
     description: 'Schmilzt zwei Materialien zusammen',
     basePower: 16,
     maxMkLevel: 1,
-    inputCount: 2,
-    outputCount: 1,
+    ports: [convIn('left', 0.33), convIn('left', 0.67), convOut('right', 0.5)],
     isLogistics: false,
     gridWidth: 2,
     gridHeight: 2,
+    category: 'smelting',
   },
   splitter: {
     type: 'splitter',
@@ -67,11 +81,16 @@ export const BUILDINGS = {
     description: 'Verteilt Eingang auf drei Ausgänge',
     basePower: 0,
     maxMkLevel: 1,
-    inputCount: 1,
-    outputCount: 3,
+    ports: [
+      convIn('left', 0.5),
+      convOut('top', 0.5),
+      convOut('right', 0.5),
+      convOut('bottom', 0.5),
+    ],
     isLogistics: true,
     gridWidth: 1,
     gridHeight: 1,
+    category: 'logistics',
   },
   merger: {
     type: 'merger',
@@ -79,12 +98,104 @@ export const BUILDINGS = {
     description: 'Führt drei Eingänge zu einem Ausgang zusammen',
     basePower: 0,
     maxMkLevel: 1,
-    inputCount: 3,
-    outputCount: 1,
+    ports: [
+      convIn('top', 0.5),
+      convIn('left', 0.5),
+      convIn('bottom', 0.5),
+      convOut('right', 0.5),
+    ],
     isLogistics: true,
     gridWidth: 1,
     gridHeight: 1,
+    category: 'logistics',
   },
-} as const satisfies Record<string, BuildingDef>;
+  manufacturer: {
+    type: 'manufacturer',
+    label: 'Hersteller',
+    description: 'Fertigt komplexe Bauteile aus bis zu 4 Materialien',
+    basePower: 55,
+    maxMkLevel: 1,
+    ports: [
+      convIn('left', 0.2),
+      convIn('left', 0.4),
+      convIn('left', 0.6),
+      convIn('left', 0.8),
+      convOut('right', 0.5),
+    ],
+    isLogistics: false,
+    gridWidth: 3,
+    gridHeight: 3,
+    category: 'production',
+  },
+  refinery: {
+    type: 'refinery',
+    label: 'Raffinerie',
+    description: 'Verarbeitet Flüssigkeiten und Rohstoffe',
+    basePower: 30,
+    maxMkLevel: 1,
+    ports: [
+      convIn('left', 0.33),
+      pipeIn('left', 0.67),
+      convOut('right', 0.33),
+      pipeOut('right', 0.67),
+    ],
+    isLogistics: false,
+    gridWidth: 2,
+    gridHeight: 3,
+    category: 'processing',
+  },
+  packager: {
+    type: 'packager',
+    label: 'Verpackungsanlage',
+    description: 'Verpackt oder entpackt Flüssigkeiten',
+    basePower: 10,
+    maxMkLevel: 1,
+    ports: [
+      convIn('left', 0.33),
+      pipeIn('left', 0.67),
+      convOut('right', 0.5),
+    ],
+    isLogistics: false,
+    gridWidth: 1,
+    gridHeight: 2,
+    category: 'processing',
+  },
+  blender: {
+    type: 'blender',
+    label: 'Mischmaschine',
+    description: 'Mischt Flüssigkeiten und Feststoffe',
+    basePower: 75,
+    maxMkLevel: 1,
+    ports: [
+      convIn('left', 0.2),
+      convIn('left', 0.4),
+      pipeIn('left', 0.6),
+      pipeIn('left', 0.8),
+      convOut('right', 0.33),
+      pipeOut('right', 0.67),
+    ],
+    isLogistics: false,
+    gridWidth: 2,
+    gridHeight: 3,
+    category: 'processing',
+  },
+  particle_accelerator: {
+    type: 'particle_accelerator',
+    label: 'Teilchenbeschleuniger',
+    description: 'Verarbeitet nukleares Material mit extremem Energieaufwand',
+    basePower: 500,
+    maxMkLevel: 1,
+    ports: [
+      convIn('left', 0.33),
+      convIn('left', 0.67),
+      pipeIn('left', 0.5),
+      convOut('right', 0.5),
+    ],
+    isLogistics: false,
+    gridWidth: 4,
+    gridHeight: 5,
+    category: 'processing',
+  },
+};
 
 export const BUILDING_LIST = Object.values(BUILDINGS);

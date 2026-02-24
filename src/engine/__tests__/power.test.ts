@@ -11,6 +11,8 @@ const makeBuilding = (overrides: Partial<PlacedBuilding>): PlacedBuilding => ({
   overclock: 100,
   purity: 'normal',
   recipeId: null,
+  rotation: 0,
+  oreType: null,
   ...overrides,
 });
 

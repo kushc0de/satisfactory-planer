@@ -6,9 +6,7 @@ import { createUiSlice, type UiSlice } from './slices/uiSlice';
 
 export type StoreState = BuildingsSlice & ConnectionsSlice & UiSlice;
 
-// Migrate old grid coordinates: old GRID_SIZE was 32 (v0), new is 64 (v1)
-// gridX/gridY values need to be halved since each unit is now twice as large
-const CURRENT_VERSION = 1;
+const CURRENT_VERSION = 2;
 
 export const useStore = create<StoreState>()(
   persist(
@@ -35,6 +33,18 @@ export const useStore = create<StoreState>()(
               b.gridY = Math.round(b.gridY / 2);
             }
           }
+        }
+        if (version < 2) {
+          // v1 → v2: add rotation/oreType to buildings, clear connections (port indices changed)
+          const buildings = state.buildings as Array<Record<string, unknown>> | undefined;
+          if (buildings) {
+            for (const b of buildings) {
+              if (b.rotation === undefined) b.rotation = 0;
+              if (b.oreType === undefined) b.oreType = null;
+            }
+          }
+          // Port indices are now flat in def.ports — old indices are incompatible
+          state.connections = [];
         }
         return state as unknown as StoreState;
       },

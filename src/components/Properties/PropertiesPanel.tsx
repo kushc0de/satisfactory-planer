@@ -3,6 +3,7 @@ import { useSelectedBuilding } from '../../store/selectors';
 import { BUILDINGS } from '../../data/buildings';
 import { calcBuildingProduction } from '../../engine/production';
 import { calcBuildingPower } from '../../engine/power';
+import type { Rotation } from '../../types';
 import BuildingIcon from '../Icons/BuildingIcon';
 import MkLevelSelector from './MkLevelSelector';
 import OverclockSlider from './OverclockSlider';
@@ -10,6 +11,9 @@ import PuritySelector from './PuritySelector';
 import RecipeSelector from './RecipeSelector';
 import ProductionDisplay from './ProductionDisplay';
 import ConnectionProperties from './ConnectionProperties';
+import OreSelector from './OreSelector';
+
+const ROTATIONS: Rotation[] = [0, 90, 180, 270];
 
 export default function PropertiesPanel() {
   const building = useSelectedBuilding();
@@ -18,6 +22,8 @@ export default function PropertiesPanel() {
   const setOverclock = useStore((s) => s.setOverclock);
   const setPurity = useStore((s) => s.setPurity);
   const setRecipe = useStore((s) => s.setRecipe);
+  const setRotation = useStore((s) => s.setRotation);
+  const setOreType = useStore((s) => s.setOreType);
   const removeBuilding = useStore((s) => s.removeBuilding);
   const removeConnectionsForBuilding = useStore((s) => s.removeConnectionsForBuilding);
   const clearSelection = useStore((s) => s.clearSelection);
@@ -77,6 +83,28 @@ export default function PropertiesPanel() {
 
         <div className="h-px bg-gray-800" />
 
+        {/* Rotation control */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wide">
+            Rotation
+          </label>
+          <div className="flex gap-1">
+            {ROTATIONS.map((rot) => (
+              <button
+                key={rot}
+                onClick={() => setRotation(building.id, rot)}
+                className={`flex-1 py-1.5 text-xs font-medium rounded-md border transition-colors
+                  ${building.rotation === rot
+                    ? 'border-amber-500 bg-amber-500/20 text-amber-400'
+                    : 'border-gray-700 bg-gray-800 text-gray-400 hover:border-gray-600'
+                  }`}
+              >
+                {rot}°
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* MK Level (miners only) */}
         {building.type === 'miner' && (
           <MkLevelSelector
@@ -91,6 +119,14 @@ export default function PropertiesPanel() {
           <PuritySelector
             value={building.purity}
             onChange={(purity) => setPurity(building.id, purity)}
+          />
+        )}
+
+        {/* Ore type (miners only) */}
+        {building.type === 'miner' && (
+          <OreSelector
+            value={building.oreType}
+            onChange={(oreType) => setOreType(building.id, oreType)}
           />
         )}
 

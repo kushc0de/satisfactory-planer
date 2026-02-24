@@ -1,9 +1,10 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { useStore } from '../../store/store';
 import { usePlacementMode } from '../../store/selectors';
 import { pixelToGrid, GRID_SIZE } from '../../utils/grid';
 import { BUILDINGS } from '../../data/buildings';
+import { getVisualGridDimensions } from '../../utils/ports';
 import GridBackground from './GridBackground';
 import PlacedBuilding from './PlacedBuilding';
 import ConnectionLine from './ConnectionLine';
@@ -18,14 +19,13 @@ export default function Canvas() {
   const addBuilding = useStore((s) => s.addBuilding);
   const placementMode = usePlacementMode();
   const cancelPlacement = useStore((s) => s.cancelPlacement);
+  const cyclePlacementRotation = useStore((s) => s.cyclePlacementRotation);
 
   const [ghostPos, setGhostPos] = useState<{ gridX: number; gridY: number } | null>(null);
 
-  // Bug 7: ref mirrors ghostPos so handleCanvasClick doesn't need ghostPos in deps
   const ghostPosRef = useRef(ghostPos);
   ghostPosRef.current = ghostPos;
 
-  // Bug 3: stable ref for scroll container
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { setNodeRef } = useDroppable({ id: 'canvas' });
@@ -38,14 +38,27 @@ export default function Canvas() {
     [setNodeRef],
   );
 
-  // Bug 7: ghostPos removed from deps — setGhostPos(null) is a no-op when already null
+  // R-key to rotate during building placement
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'r' || e.key === 'R') {
+        const pm = useStore.getState().placementMode;
+        if (pm?.kind === 'building') {
+          e.preventDefault();
+          cyclePlacementRotation();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [cyclePlacementRotation]);
+
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!placementMode || placementMode.kind !== 'building') {
         setGhostPos(null);
         return;
       }
-      // Bug 3: use stable ref instead of e.currentTarget
       const container = scrollContainerRef.current;
       if (!container) return;
       const rect = container.getBoundingClientRect();
@@ -54,36 +67,32 @@ export default function Canvas() {
       const x = e.clientX - rect.left + scrollLeft;
       const y = e.clientY - rect.top + scrollTop;
 
-      // Bug 2: correct centering using building definition
       const def = BUILDINGS[placementMode.buildingType];
-      const gridX = Math.max(0, pixelToGrid(x) - Math.floor(def.gridWidth / 2));
-      const gridY = Math.max(0, pixelToGrid(y) - Math.floor(def.gridHeight / 2));
+      const { gridWidth, gridHeight } = getVisualGridDimensions(def, placementMode.rotation);
+      const gridX = Math.max(0, pixelToGrid(x) - Math.floor(gridWidth / 2));
+      const gridY = Math.max(0, pixelToGrid(y) - Math.floor(gridHeight / 2));
       setGhostPos({ gridX, gridY });
     },
     [placementMode],
   );
 
-  // Bug 7: ghostPos removed from deps — uses ghostPosRef instead
-  // Bug 4: draft cancellation BEFORE belt-mode early return
   const handleCanvasClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      // Bug 4: cancel draft on any canvas click, even in belt mode
       const draft = useStore.getState().connectionDraft;
       if (draft) {
         cancelConnectionDraft();
         return;
       }
 
-      // Building placement mode — read from ref to avoid dep on ghostPos
       const currentGhost = ghostPosRef.current;
-      if (placementMode?.kind === 'building' && currentGhost) {
+      const pm = useStore.getState().placementMode;
+      if (pm?.kind === 'building' && currentGhost) {
         e.stopPropagation();
-        addBuilding(placementMode.buildingType, currentGhost.gridX, currentGhost.gridY);
+        addBuilding(pm.buildingType, currentGhost.gridX, currentGhost.gridY, pm.rotation);
         return;
       }
 
-      // Belt placement mode - clicks on canvas do nothing (ports handle it)
-      if (placementMode?.kind === 'belt') {
+      if (pm?.kind === 'belt') {
         return;
       }
 
@@ -148,6 +157,7 @@ export default function Canvas() {
             buildingType={placementMode.buildingType}
             gridX={ghostPos.gridX}
             gridY={ghostPos.gridY}
+            rotation={placementMode.rotation}
           />
         )}
 
@@ -166,7 +176,7 @@ export default function Canvas() {
 
         {isPlacing && (
           <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-amber-500/90 text-gray-950 text-sm font-semibold px-4 py-2 rounded-lg shadow-lg pointer-events-none">
-            Klicken zum Platzieren — ESC / Rechtsklick zum Abbrechen
+            Klicken zum Platzieren — R zum Drehen — ESC / Rechtsklick zum Abbrechen
           </div>
         )}
       </div>

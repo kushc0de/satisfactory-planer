@@ -78,8 +78,11 @@ describe('calcBuildingProduction', () => {
       overclock: 100,
       purity: 'pure',
       recipeId: null,
+      rotation: 0,
+      oreType: null,
     };
     const result = calcBuildingProduction(building);
+    expect(result.outputs[0].itemId).toBe('iron_ore');
     expect(result.outputs[0].rate).toBe(480); // MK3 pure 100%
   });
 
@@ -93,6 +96,8 @@ describe('calcBuildingProduction', () => {
       overclock: 100,
       purity: 'normal',
       recipeId: null,
+      rotation: 0,
+      oreType: null,
     };
     const result = calcBuildingProduction(building);
     expect(result.inputs).toHaveLength(0);
@@ -109,6 +114,8 @@ describe('calcBuildingProduction', () => {
       overclock: 150,
       purity: 'normal',
       recipeId: 'iron_ingot',
+      rotation: 0,
+      oreType: null,
     };
     const result = calcBuildingProduction(building);
     expect(result.outputs[0].rate).toBe(45); // 30 * 1.5

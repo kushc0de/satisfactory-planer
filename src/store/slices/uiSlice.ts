@@ -1,5 +1,7 @@
 import type { StateCreator } from 'zustand';
-import type { ConnectionDraft, PlacementMode } from '../../types';
+import type { ConnectionDraft, PlacementMode, Rotation } from '../../types';
+
+const ROTATION_CYCLE: Rotation[] = [0, 90, 180, 270];
 
 export interface UiSlice {
   selectedBuildingId: string | null;
@@ -13,6 +15,7 @@ export interface UiSlice {
   clearSelection: () => void;
   setPlacementMode: (mode: PlacementMode | null) => void;
   cancelPlacement: () => void;
+  cyclePlacementRotation: () => void;
 }
 
 export const createUiSlice: StateCreator<UiSlice, [], [], UiSlice> = (set) => ({
@@ -39,4 +42,18 @@ export const createUiSlice: StateCreator<UiSlice, [], [], UiSlice> = (set) => ({
     set({ placementMode: mode, connectionDraft: null }),
 
   cancelPlacement: () => set({ placementMode: null, connectionDraft: null }),
+
+  cyclePlacementRotation: () =>
+    set((state) => {
+      if (!state.placementMode || state.placementMode.kind !== 'building') return state;
+      const currentRotation = state.placementMode.rotation;
+      const idx = ROTATION_CYCLE.indexOf(currentRotation);
+      const nextRotation = ROTATION_CYCLE[(idx + 1) % 4];
+      return {
+        placementMode: {
+          ...state.placementMode,
+          rotation: nextRotation,
+        },
+      };
+    }),
 });

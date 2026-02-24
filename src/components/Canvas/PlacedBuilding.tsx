@@ -2,7 +2,8 @@ import { useState, useCallback } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import type { PlacedBuilding as PlacedBuildingType } from '../../types';
 import { BUILDINGS } from '../../data/buildings';
-import { gridToPixel, GRID_SIZE } from '../../utils/grid';
+import { gridToPixel } from '../../utils/grid';
+import { getVisualDimensions, getInputPorts, getOutputPorts } from '../../utils/ports';
 import { useStore } from '../../store/store';
 import { usePlacementMode } from '../../store/selectors';
 import { calcBuildingProduction } from '../../engine/production';
@@ -21,10 +22,10 @@ export default function PlacedBuilding({ building }: Props) {
   const placementMode = usePlacementMode();
   const isSelected = selectedId === building.id;
   const def = BUILDINGS[building.type];
+  const rotation = building.rotation;
 
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
-  // Bug 6: disable dragging when placement mode is active
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: building.id,
     data: { type: 'placed', buildingId: building.id },
@@ -33,8 +34,7 @@ export default function PlacedBuilding({ building }: Props) {
 
   const pixelX = gridToPixel(building.gridX);
   const pixelY = gridToPixel(building.gridY);
-  const width = def.gridWidth * GRID_SIZE;
-  const height = def.gridHeight * GRID_SIZE;
+  const { width, height } = getVisualDimensions(def, rotation);
 
   const style: React.CSSProperties = {
     position: 'absolute',
@@ -51,6 +51,9 @@ export default function PlacedBuilding({ building }: Props) {
   const outputRate = prod.outputs.length > 0 ? prod.outputs[0].rate : null;
 
   const hasMkLevels = def.maxMkLevel > 1;
+
+  const inputPorts = getInputPorts(def);
+  const outputPorts = getOutputPorts(def);
 
   const handleContextMenu = useCallback(
     (e: React.MouseEvent) => {
@@ -87,7 +90,14 @@ export default function PlacedBuilding({ building }: Props) {
           {def.label}
         </span>
 
-        {/* MK Badge (top-right, only for buildings with MK levels) */}
+        {/* Rotation indicator */}
+        {rotation !== 0 && (
+          <div className="absolute -top-2 -left-2 bg-gray-700 text-gray-300 text-[8px] font-bold rounded px-1 py-0.5 leading-none shadow z-20">
+            {rotation}°
+          </div>
+        )}
+
+        {/* MK Badge */}
         {hasMkLevels && (
           <div className="absolute -top-2 -right-2 bg-amber-500 text-gray-950 text-[9px] font-bold rounded px-1 py-0.5 leading-none shadow z-20">
             MK{building.mkLevel}
@@ -108,36 +118,35 @@ export default function PlacedBuilding({ building }: Props) {
           </div>
         )}
 
-        {/* Input ports (left side) */}
-        {Array.from({ length: def.inputCount }).map((_, i) => (
+        {/* Input ports */}
+        {inputPorts.map((port, i) => (
           <PortDot
             key={`in-${i}`}
             buildingId={building.id}
             portType="input"
             portIndex={i}
-            side="left"
-            offset={i}
-            total={def.inputCount}
-            buildingHeight={height}
+            port={port}
+            rotation={rotation}
+            visualWidth={width}
+            visualHeight={height}
           />
         ))}
 
-        {/* Output ports (right side) */}
-        {Array.from({ length: def.outputCount }).map((_, i) => (
+        {/* Output ports */}
+        {outputPorts.map((port, i) => (
           <PortDot
             key={`out-${i}`}
             buildingId={building.id}
             portType="output"
             portIndex={i}
-            side="right"
-            offset={i}
-            total={def.outputCount}
-            buildingHeight={height}
+            port={port}
+            rotation={rotation}
+            visualWidth={width}
+            visualHeight={height}
           />
         ))}
       </div>
 
-      {/* Context menu */}
       {contextMenu && (
         <BuildingContextMenu
           building={building}

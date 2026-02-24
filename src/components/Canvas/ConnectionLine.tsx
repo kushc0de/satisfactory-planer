@@ -1,6 +1,7 @@
 import type { Connection as ConnectionType, PlacedBuilding } from '../../types';
 import { BUILDINGS } from '../../data/buildings';
-import { gridToPixel, GRID_SIZE } from '../../utils/grid';
+import { gridToPixel } from '../../utils/grid';
+import { getVisualDimensions, getPortPixelOffset, getOutputPorts, getInputPorts, rotateSide, tangentOffset } from '../../utils/ports';
 import { useStore } from '../../store/store';
 import { checkBottleneck } from '../../engine/throughput';
 import { BELTS } from '../../data/belts';
@@ -14,21 +15,25 @@ function getPortPosition(
   building: PlacedBuilding,
   portType: 'input' | 'output',
   portIndex: number,
-): { x: number; y: number } | null {
+): { x: number; y: number; side: 'top' | 'right' | 'bottom' | 'left' } | null {
   const def = BUILDINGS[building.type];
   if (!def) return null;
 
   const px = gridToPixel(building.gridX);
   const py = gridToPixel(building.gridY);
-  const width = def.gridWidth * GRID_SIZE;
-  const height = def.gridHeight * GRID_SIZE;
+  const { width: visW, height: visH } = getVisualDimensions(def, building.rotation);
 
-  const total = portType === 'input' ? def.inputCount : def.outputCount;
-  const spacing = height / (total + 1);
+  const ports = portType === 'input' ? getInputPorts(def) : getOutputPorts(def);
+  const port = ports[portIndex];
+  if (!port) return null;
+
+  const offset = getPortPixelOffset(port, building.rotation, visW, visH);
+  const effectiveSide = rotateSide(port.side, building.rotation);
 
   return {
-    x: portType === 'output' ? px + width : px,
-    y: py + spacing * (portIndex + 1),
+    x: px + offset.x,
+    y: py + offset.y,
+    side: effectiveSide,
   };
 }
 
@@ -48,9 +53,13 @@ export default function ConnectionLine({ connection, buildings }: Props) {
   const bottleneck = checkBottleneck(connection, buildings);
   const beltLabel = BELTS[connection.beltMk].label;
 
-  // Bezier control points for smooth curves
-  const dx = Math.abs(to.x - from.x) * 0.5;
-  const path = `M ${from.x} ${from.y} C ${from.x + dx} ${from.y}, ${to.x - dx} ${to.y}, ${to.x} ${to.y}`;
+  // Bézier control points based on port side directions
+  const dist = Math.hypot(to.x - from.x, to.y - from.y);
+  const magnitude = Math.max(40, dist * 0.4);
+  const fromTangent = tangentOffset(from.side, magnitude);
+  const toTangent = tangentOffset(to.side, magnitude);
+
+  const path = `M ${from.x} ${from.y} C ${from.x + fromTangent.dx} ${from.y + fromTangent.dy}, ${to.x + toTangent.dx} ${to.y + toTangent.dy}, ${to.x} ${to.y}`;
 
   const midX = (from.x + to.x) / 2;
   const midY = (from.y + to.y) / 2;

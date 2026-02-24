@@ -7,11 +7,30 @@ export type BuildingType =
   | 'assembler'
   | 'foundry'
   | 'splitter'
-  | 'merger';
+  | 'merger'
+  | 'manufacturer'
+  | 'refinery'
+  | 'packager'
+  | 'blender'
+  | 'particle_accelerator';
 
 export type MkLevel = 1 | 2 | 3;
 
 export type Purity = 'impure' | 'normal' | 'pure';
+
+export type Rotation = 0 | 90 | 180 | 270;
+
+export type PortSide = 'top' | 'right' | 'bottom' | 'left';
+
+export type PortCategory = 'conveyor' | 'pipe';
+
+export interface PortDefinition {
+  type: 'input' | 'output';
+  side: PortSide;
+  category: PortCategory;
+  /** 0–1 fractional offset along the side (0 = start, 1 = end) */
+  offset: number;
+}
 
 export interface Port {
   id: string;
@@ -28,6 +47,8 @@ export interface PlacedBuilding {
   overclock: number; // 1-250
   purity: Purity; // only relevant for miners
   recipeId: string | null;
+  rotation: Rotation;
+  oreType: string | null;
 }
 
 // === Connection Types ===
@@ -51,11 +72,11 @@ export interface BuildingDef {
   description: string;
   basePower: number; // MW
   maxMkLevel: MkLevel;
-  inputCount: number;
-  outputCount: number;
+  ports: PortDefinition[];
   isLogistics: boolean;
   gridWidth: number;
   gridHeight: number;
+  category: 'extraction' | 'smelting' | 'production' | 'processing' | 'logistics';
 }
 
 export interface ItemDef {
@@ -91,7 +112,7 @@ export interface BeltDef {
 // === Factory Layout (Export/Import) ===
 
 export interface FactoryLayout {
-  version: 1;
+  version: number;
   buildings: PlacedBuilding[];
   connections: Connection[];
 }
@@ -99,7 +120,7 @@ export interface FactoryLayout {
 // === UI State ===
 
 export type PlacementMode =
-  | { kind: 'building'; buildingType: BuildingType }
+  | { kind: 'building'; buildingType: BuildingType; rotation: Rotation }
   | { kind: 'belt'; beltMk: BeltMk };
 
 export interface ConnectionDraft {
