@@ -145,11 +145,10 @@ export default function SolverPanel({ onClose }: { onClose: () => void }) {
     });
   }, []);
 
-  /** Build the complete SolverResult including extractor steps from current configs */
-  const buildFullResult = useCallback((): SolverResult | null => {
+  /** Complete SolverResult including extractor steps from current configs */
+  const fullResult = useMemo((): SolverResult | null => {
     if (!result) return null;
 
-    // Processing steps (non-extractor) from solver
     const processingSteps = result.steps.filter((s) => !s.isExtractor);
     const extractorSteps = extractorStepsFromConfigs(resourceConfigs, strategy);
     const allSteps = [...processingSteps, ...extractorSteps];
@@ -167,7 +166,6 @@ export default function SolverPanel({ onClose }: { onClose: () => void }) {
   }, [result, resourceConfigs, strategy]);
 
   const handleTransferToLayout = () => {
-    const fullResult = buildFullResult();
     if (!fullResult) return;
 
     const currentBuildings = useStore.getState().buildings;
@@ -245,9 +243,6 @@ export default function SolverPanel({ onClose }: { onClose: () => void }) {
     onClose();
   };
 
-  // Compute display totals including extractors
-  const displayResult = buildFullResult();
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <div className="bg-[#0f0f1a] border border-gray-700 rounded-xl shadow-2xl w-[650px] max-h-[80vh] flex flex-col">
@@ -321,7 +316,7 @@ export default function SolverPanel({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Results */}
-        {result && displayResult && (
+        {result && fullResult && (
           <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
             {/* Processing Steps */}
             {result.steps.map((step, i) => {
@@ -438,11 +433,11 @@ export default function SolverPanel({ onClose }: { onClose: () => void }) {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-gray-800/50 rounded p-2">
                   <span className="text-gray-500">Gebäude: </span>
-                  <span className="text-gray-200 font-mono font-bold">{displayResult.totalBuildings}</span>
+                  <span className="text-gray-200 font-mono font-bold">{fullResult.totalBuildings}</span>
                 </div>
                 <div className="bg-gray-800/50 rounded p-2">
                   <span className="text-gray-500">Energie: </span>
-                  <span className="text-yellow-400 font-mono font-bold">{displayResult.totalPower.toFixed(1)} MW</span>
+                  <span className="text-yellow-400 font-mono font-bold">{fullResult.totalPower.toFixed(1)} MW</span>
                 </div>
               </div>
 
