@@ -13,6 +13,7 @@ interface Props {
 export default function BuildingContextMenu({ building, x, y, onClose }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const setMkLevel = useStore((s) => s.setMkLevel);
+  const rotateBuilding = useStore((s) => s.rotateBuilding);
   const removeBuilding = useStore((s) => s.removeBuilding);
   const removeConnectionsForBuilding = useStore((s) => s.removeConnectionsForBuilding);
 
@@ -41,6 +42,11 @@ export default function BuildingContextMenu({ building, x, y, onClose }: Props) 
     onClose();
   };
 
+  const handleRotate = () => {
+    rotateBuilding(building.id);
+    onClose();
+  };
+
   const handleDelete = () => {
     removeConnectionsForBuilding(building.id);
     removeBuilding(building.id);
@@ -56,6 +62,16 @@ export default function BuildingContextMenu({ building, x, y, onClose }: Props) 
       <div className="px-3 py-1.5 text-xs text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-700/60 mb-1">
         {def.label}
       </div>
+
+      <button
+        onClick={handleRotate}
+        className="w-full text-left px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-700/50 hover:text-gray-100 transition-colors flex items-center justify-between"
+      >
+        <span>Drehen</span>
+        <span className="text-xs text-gray-500 ml-2">R &middot; {building.rotation + 90 > 270 ? 0 : building.rotation + 90}°</span>
+      </button>
+
+      <div className="border-t border-gray-700/60 my-1" />
 
       {hasMkLevels && (
         <>

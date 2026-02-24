@@ -15,7 +15,7 @@ const modifiers = [snapModifier];
 export default function App() {
   const moveBuilding = useStore((s) => s.moveBuilding);
   const buildings = useStore((s) => s.buildings);
-  // ESC key: priority-based cancellation using getState() to avoid stale closures
+  // ESC key: priority-based cancellation; R key: rotate selected building
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -24,6 +24,15 @@ export default function App() {
           state.cancelConnectionDraft();
         } else if (state.placementMode) {
           state.cancelPlacement();
+        }
+      }
+      if (e.key === 'r' || e.key === 'R') {
+        const state = useStore.getState();
+        // Only rotate selected building when NOT in placement mode
+        // (placement rotation is handled in Canvas.tsx)
+        if (!state.placementMode && state.selectedBuildingId) {
+          e.preventDefault();
+          state.rotateBuilding(state.selectedBuildingId);
         }
       }
     };

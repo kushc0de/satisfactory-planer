@@ -23,8 +23,8 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
     maxMkLevel: 3,
     ports: [convOut('right', 0.5)],
     isLogistics: false,
-    gridWidth: 1,
-    gridHeight: 2,
+    gridWidth: 2,   // 14m → 2 foundations along flow
+    gridHeight: 1,  // 6m → 1 foundation perpendicular
     category: 'extraction',
   },
   smelter: {
@@ -35,8 +35,8 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
     maxMkLevel: 1,
     ports: [convIn('left', 0.5), convOut('right', 0.5)],
     isLogistics: false,
-    gridWidth: 1,
-    gridHeight: 2,
+    gridWidth: 2,   // 9m → 2 foundations along flow
+    gridHeight: 1,  // 6m → 1 foundation perpendicular
     category: 'smelting',
   },
   constructor: {
@@ -47,8 +47,8 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
     maxMkLevel: 1,
     ports: [convIn('left', 0.5), convOut('right', 0.5)],
     isLogistics: false,
-    gridWidth: 1,
-    gridHeight: 2,
+    gridWidth: 2,   // 10m → 2 foundations along flow
+    gridHeight: 1,  // 8m → 1 foundation perpendicular
     category: 'production',
   },
   assembler: {
@@ -140,8 +140,8 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
       pipeOut('right', 0.67),
     ],
     isLogistics: false,
-    gridWidth: 2,
-    gridHeight: 3,
+    gridWidth: 3,   // 20m → 3 foundations along flow
+    gridHeight: 2,  // 10m → 2 foundations perpendicular
     category: 'processing',
   },
   packager: {
@@ -156,8 +156,8 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
       convOut('right', 0.5),
     ],
     isLogistics: false,
-    gridWidth: 1,
-    gridHeight: 2,
+    gridWidth: 1,   // 8m → 1 foundation along flow
+    gridHeight: 1,  // 8m → 1 foundation perpendicular
     category: 'processing',
   },
   blender: {
@@ -192,8 +192,8 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
       convOut('right', 0.5),
     ],
     isLogistics: false,
-    gridWidth: 4,
-    gridHeight: 5,
+    gridWidth: 5,   // 38m → 5 foundations along flow
+    gridHeight: 3,  // 24m → 3 foundations perpendicular
     category: 'processing',
   },
 };
