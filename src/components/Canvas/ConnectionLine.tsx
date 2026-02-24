@@ -5,6 +5,7 @@ import { getVisualDimensions, getPortPixelOffset, getOutputPorts, getInputPorts,
 import { useStore } from '../../store/store';
 import { checkBottleneck } from '../../engine/throughput';
 import { BELTS } from '../../data/belts';
+import { PIPES } from '../../data/pipes';
 
 interface Props {
   connection: ConnectionType;
@@ -51,7 +52,7 @@ export default function ConnectionLine({ connection, buildings }: Props) {
   if (!from || !to) return null;
 
   const bottleneck = checkBottleneck(connection, buildings);
-  const beltLabel = BELTS[connection.beltMk].label;
+  const isPipe = connection.connectionKind === 'pipe';
 
   // Bézier control points based on port side directions
   const dist = Math.hypot(to.x - from.x, to.y - from.y);
@@ -63,6 +64,13 @@ export default function ConnectionLine({ connection, buildings }: Props) {
 
   const midX = (from.x + to.x) / 2;
   const midY = (from.y + to.y) / 2;
+
+  // Colors based on connection type
+  const normalColor = isPipe ? '#0891B2' : '#6B7280';
+  const selectedColor = isPipe ? '#06B6D4' : '#F59E0B';
+  const strokeColor = bottleneck.isBottleneck ? '#EF4444' : isSelected ? selectedColor : normalColor;
+
+  const mkLabel = isPipe ? `MK${connection.pipeMk}` : `MK${connection.beltMk}`;
 
   return (
     <g
@@ -78,17 +86,11 @@ export default function ConnectionLine({ connection, buildings }: Props) {
       <path
         d={path}
         fill="none"
-        stroke={
-          bottleneck.isBottleneck
-            ? '#EF4444'
-            : isSelected
-              ? '#F59E0B'
-              : '#6B7280'
-        }
+        stroke={strokeColor}
         strokeWidth={isSelected ? 3 : 2}
-        strokeDasharray={bottleneck.isBottleneck ? '6 3' : undefined}
+        strokeDasharray={bottleneck.isBottleneck ? '6 3' : isPipe ? '8 4' : undefined}
       />
-      {/* Belt label */}
+      {/* Label */}
       {isSelected && (
         <g>
           <rect
@@ -98,18 +100,18 @@ export default function ConnectionLine({ connection, buildings }: Props) {
             height="20"
             rx="4"
             fill="#1a1a2e"
-            stroke={bottleneck.isBottleneck ? '#EF4444' : '#F59E0B'}
+            stroke={bottleneck.isBottleneck ? '#EF4444' : selectedColor}
             strokeWidth="1"
           />
           <text
             x={midX}
             y={midY + 4}
             textAnchor="middle"
-            fill={bottleneck.isBottleneck ? '#EF4444' : '#F59E0B'}
+            fill={bottleneck.isBottleneck ? '#EF4444' : selectedColor}
             fontSize="9"
             fontFamily="monospace"
           >
-            MK{connection.beltMk}
+            {mkLabel}
           </text>
         </g>
       )}

@@ -1,7 +1,8 @@
 import type { BuildingType } from '../../types';
 
 type ShapeType = 'pickaxe' | 'flame' | 'gear' | 'gears' | 'foundry' | 'split' | 'merge'
-  | 'manufacturer' | 'refinery' | 'packager' | 'blender' | 'particle';
+  | 'manufacturer' | 'refinery' | 'packager' | 'blender' | 'particle' | 'water' | 'oil'
+  | 'converter' | 'quantum' | 'power' | 'sink' | 'storage' | 'buffer' | 'junction';
 
 const ICON_CONFIGS: Record<BuildingType, { color: string; shape: ShapeType }> = {
   miner: { color: '#F59E0B', shape: 'pickaxe' },
@@ -16,6 +17,19 @@ const ICON_CONFIGS: Record<BuildingType, { color: string; shape: ShapeType }> = 
   packager: { color: '#22D3EE', shape: 'packager' },
   blender: { color: '#84CC16', shape: 'blender' },
   particle_accelerator: { color: '#EC4899', shape: 'particle' },
+  converter: { color: '#D946EF', shape: 'converter' },
+  quantum_encoder: { color: '#7C3AED', shape: 'quantum' },
+  water_extractor: { color: '#0EA5E9', shape: 'water' },
+  oil_extractor: { color: '#854D0E', shape: 'oil' },
+  coal_generator: { color: '#16A34A', shape: 'power' },
+  fuel_generator: { color: '#22C55E', shape: 'power' },
+  nuclear_power_plant: { color: '#FACC15', shape: 'power' },
+  biomass_burner: { color: '#65A30D', shape: 'power' },
+  geothermal_generator: { color: '#EA580C', shape: 'power' },
+  awesome_sink: { color: '#F472B6', shape: 'sink' },
+  storage_container: { color: '#9CA3AF', shape: 'storage' },
+  fluid_buffer: { color: '#67E8F9', shape: 'buffer' },
+  pipeline_junction: { color: '#0891B2', shape: 'junction' },
 };
 
 interface Props {
@@ -127,6 +141,64 @@ export default function BuildingIcon({ type, size = 32 }: Props) {
           <ellipse cx="16" cy="16" rx="10" ry="4" stroke={config.color} strokeWidth="1.5" fill="none" />
           <ellipse cx="16" cy="16" rx="10" ry="4" stroke={config.color} strokeWidth="1.5" fill="none" transform="rotate(60 16 16)" />
           <ellipse cx="16" cy="16" rx="10" ry="4" stroke={config.color} strokeWidth="1.5" fill="none" transform="rotate(120 16 16)" />
+        </>
+      )}
+      {/* Water Extractor */}
+      {config.shape === 'water' && (
+        <>
+          <path d="M16 8C16 8 10 16 10 20C10 23.3 12.7 26 16 26C19.3 26 22 23.3 22 20C22 16 16 8 16 8Z" fill={config.color + '44'} stroke={config.color} strokeWidth="1.5" />
+        </>
+      )}
+      {/* Oil Extractor */}
+      {config.shape === 'oil' && (
+        <>
+          <rect x="12" y="14" width="8" height="12" rx="1" stroke={config.color} strokeWidth="1.5" fill={config.color + '33'} />
+          <path d="M14 14V8L16 6L18 8V14" stroke={config.color} strokeWidth="1.5" />
+        </>
+      )}
+      {/* Converter */}
+      {config.shape === 'converter' && (
+        <>
+          <path d="M8 16L16 8L24 16L16 24Z" stroke={config.color} strokeWidth="1.5" fill={config.color + '33'} />
+          <circle cx="16" cy="16" r="3" fill={config.color} fillOpacity="0.5" />
+        </>
+      )}
+      {/* Quantum Encoder */}
+      {config.shape === 'quantum' && (
+        <>
+          <circle cx="16" cy="16" r="8" stroke={config.color} strokeWidth="1.5" fill={config.color + '22'} />
+          <circle cx="16" cy="16" r="3" fill={config.color} />
+          <path d="M16 8V6M16 26V24M8 16H6M26 16H24" stroke={config.color} strokeWidth="1.5" strokeLinecap="round" />
+        </>
+      )}
+      {/* Power Generator */}
+      {config.shape === 'power' && (
+        <path d="M18 6L10 18H16L14 26L22 14H16L18 6Z" fill={config.color} fillOpacity="0.6" stroke={config.color} strokeWidth="1.5" strokeLinejoin="round" />
+      )}
+      {/* AWESOME Sink */}
+      {config.shape === 'sink' && (
+        <>
+          <rect x="8" y="10" width="16" height="14" rx="2" stroke={config.color} strokeWidth="1.5" fill={config.color + '33'} />
+          <path d="M12 16L16 20L20 16" stroke={config.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </>
+      )}
+      {/* Storage Container */}
+      {config.shape === 'storage' && (
+        <rect x="8" y="8" width="16" height="16" rx="2" stroke={config.color} strokeWidth="1.5" fill={config.color + '33'} />
+      )}
+      {/* Fluid Buffer */}
+      {config.shape === 'buffer' && (
+        <>
+          <rect x="10" y="8" width="12" height="16" rx="6" stroke={config.color} strokeWidth="1.5" fill={config.color + '33'} />
+          <line x1="10" y1="16" x2="22" y2="16" stroke={config.color} strokeWidth="1" strokeDasharray="2 2" />
+        </>
+      )}
+      {/* Pipeline Junction */}
+      {config.shape === 'junction' && (
+        <>
+          <line x1="6" y1="16" x2="26" y2="16" stroke={config.color} strokeWidth="2" strokeLinecap="round" />
+          <line x1="16" y1="6" x2="16" y2="26" stroke={config.color} strokeWidth="2" strokeLinecap="round" />
+          <circle cx="16" cy="16" r="3" fill={config.color} />
         </>
       )}
     </svg>

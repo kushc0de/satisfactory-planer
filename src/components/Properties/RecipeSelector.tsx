@@ -1,4 +1,4 @@
-import { getRecipesForBuilding } from '../../data/recipes';
+import { getStandardRecipesForBuilding, getAlternateRecipesForBuilding } from '../../data/recipes/index';
 import type { BuildingType } from '../../types';
 
 interface Props {
@@ -8,8 +8,10 @@ interface Props {
 }
 
 export default function RecipeSelector({ buildingType, value, onChange }: Props) {
-  const recipes = getRecipesForBuilding(buildingType);
-  if (recipes.length === 0) return null;
+  const standardRecipes = getStandardRecipesForBuilding(buildingType);
+  const alternateRecipes = getAlternateRecipesForBuilding(buildingType);
+
+  if (standardRecipes.length === 0 && alternateRecipes.length === 0) return null;
 
   return (
     <div>
@@ -23,11 +25,20 @@ export default function RecipeSelector({ buildingType, value, onChange }: Props)
           focus:outline-none focus:border-amber-500 cursor-pointer"
       >
         <option value="">-- Kein Rezept --</option>
-        {recipes.map((r) => (
-          <option key={r.id} value={r.id}>
-            {r.label}
-          </option>
-        ))}
+        {standardRecipes.length > 0 && (
+          <optgroup label="Standard">
+            {standardRecipes.map((r) => (
+              <option key={r.id} value={r.id}>{r.label}</option>
+            ))}
+          </optgroup>
+        )}
+        {alternateRecipes.length > 0 && (
+          <optgroup label="Alternativ">
+            {alternateRecipes.map((r) => (
+              <option key={r.id} value={r.id}>{r.label}</option>
+            ))}
+          </optgroup>
+        )}
       </select>
     </div>
   );

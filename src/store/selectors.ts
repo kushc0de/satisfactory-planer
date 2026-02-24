@@ -1,6 +1,6 @@
 import { useStore, type StoreState } from './store';
 import { useShallow } from 'zustand/react/shallow';
-import { calcBuildingPower, calcTotalPower } from '../engine/power';
+import { calcBuildingPower, calcTotalPower, calcPowerConsumed, calcPowerProduced } from '../engine/power';
 import { calcBuildingProduction } from '../engine/production';
 import { findAllBottlenecks } from '../engine/throughput';
 import type { PlacedBuilding, BuildingProduction, PlacementMode } from '../types';
@@ -19,6 +19,14 @@ export function useSelectedBuilding(): PlacedBuilding | null {
 
 export function useTotalPower(): number {
   return useStore((s) => calcTotalPower(s.buildings));
+}
+
+export function usePowerConsumed(): number {
+  return useStore((s) => calcPowerConsumed(s.buildings));
+}
+
+export function usePowerProduced(): number {
+  return useStore((s) => calcPowerProduced(s.buildings));
 }
 
 export function useBuildingCount(): number {

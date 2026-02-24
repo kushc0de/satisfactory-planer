@@ -22,6 +22,8 @@ const makeConnection = (id: string, fromId: string, toId: string, beltMk: 1 | 2 
   toBuildingId: toId,
   toPortIndex: 0,
   beltMk,
+  pipeMk: 1,
+  connectionKind: 'belt',
 });
 
 describe('checkBottleneck', () => {
@@ -31,7 +33,7 @@ describe('checkBottleneck', () => {
     const result = checkBottleneck(conn, buildings);
     expect(result.isBottleneck).toBe(false);
     expect(result.requiredRate).toBe(60);
-    expect(result.beltCapacity).toBe(60);
+    expect(result.capacity).toBe(60);
   });
 
   it('MK1 belt with MK3 miner pure = bottleneck', () => {

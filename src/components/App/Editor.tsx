@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { createSnapModifier } from '@dnd-kit/modifiers';
 import { useStore } from '../../store/store';
@@ -9,6 +9,7 @@ import BuildingPalette from '../Palette/BuildingPalette';
 import Canvas from '../Canvas/Canvas';
 import PropertiesPanel from '../Properties/PropertiesPanel';
 import FactoryMetrics from '../Overlay/FactoryMetrics';
+import SolverPanel from '../Solver/SolverPanel';
 
 const snapModifier = createSnapModifier(GRID_SIZE);
 const modifiers = [snapModifier];
@@ -23,6 +24,8 @@ export default function Editor() {
 
   const currentProjectId = useProjectsStore((s) => s.currentProjectId);
   const updateProjectMeta = useProjectsStore((s) => s.updateProjectMeta);
+
+  const [showSolver, setShowSolver] = useState(false);
 
   const projectIdRef = useRef(currentProjectId);
   projectIdRef.current = currentProjectId;
@@ -125,13 +128,14 @@ export default function Editor() {
   return (
     <DndContext sensors={sensors} modifiers={modifiers} onDragEnd={handleDragEnd}>
       <div className="h-screen w-screen flex flex-col overflow-hidden bg-[#0a0a15]">
-        <Toolbar />
+        <Toolbar onOpenSolver={() => setShowSolver(true)} />
         <div className="flex flex-1 overflow-hidden">
           <BuildingPalette />
           <Canvas />
           <PropertiesPanel />
         </div>
         <FactoryMetrics />
+        {showSolver && <SolverPanel onClose={() => setShowSolver(false)} />}
       </div>
     </DndContext>
   );

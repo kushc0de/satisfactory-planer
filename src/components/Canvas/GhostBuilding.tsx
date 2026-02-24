@@ -2,6 +2,8 @@ import type { BuildingType, Rotation } from '../../types';
 import { BUILDINGS } from '../../data/buildings';
 import { GRID_SIZE } from '../../utils/grid';
 import { getVisualDimensions, getInputPorts, getOutputPorts, getPortPixelOffset } from '../../utils/ports';
+import { canPlace } from '../../utils/collision';
+import { useStore } from '../../store/store';
 import BuildingIcon from '../Icons/BuildingIcon';
 
 interface Props {
@@ -13,14 +15,21 @@ interface Props {
 
 export default function GhostBuilding({ buildingType, gridX, gridY, rotation }: Props) {
   const def = BUILDINGS[buildingType];
+  const buildings = useStore((s) => s.buildings);
   const { width, height } = getVisualDimensions(def, rotation);
 
   const inputPorts = getInputPorts(def);
   const outputPorts = getOutputPorts(def);
 
+  const hasCollision = !canPlace(buildingType, gridX, gridY, rotation, buildings);
+
   return (
     <div
-      className="absolute rounded-lg border-2 border-dashed border-amber-400/60 bg-amber-500/15 flex flex-col items-center justify-center pointer-events-none"
+      className={`absolute rounded-lg border-2 border-dashed flex flex-col items-center justify-center pointer-events-none ${
+        hasCollision
+          ? 'border-red-400/60 bg-red-500/20'
+          : 'border-amber-400/60 bg-amber-500/15'
+      }`}
       style={{
         left: gridX * GRID_SIZE,
         top: gridY * GRID_SIZE,
@@ -30,11 +39,16 @@ export default function GhostBuilding({ buildingType, gridX, gridY, rotation }: 
       }}
     >
       <BuildingIcon type={buildingType} size={Math.min(width, height) * 0.5} />
-      <span className="text-[10px] font-medium text-amber-300/80 mt-0.5">
+      <span className={`text-[10px] font-medium mt-0.5 ${
+        hasCollision ? 'text-red-300/80' : 'text-amber-300/80'
+      }`}>
         {def.label}
       </span>
       {rotation !== 0 && (
-        <span className="text-[8px] font-bold text-amber-400/60">{rotation}°</span>
+        <span className={`text-[8px] font-bold ${hasCollision ? 'text-red-400/60' : 'text-amber-400/60'}`}>{rotation}°</span>
+      )}
+      {hasCollision && (
+        <span className="text-[8px] font-bold text-red-400 mt-0.5">Kollision!</span>
       )}
 
       {/* Port preview dots */}

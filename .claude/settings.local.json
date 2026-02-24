@@ -5,7 +5,9 @@
       "WebFetch(domain:satisfactory.wiki.gg)",
       "Bash(cd /c/Users/Administrator/Desktop/satisfactory-planner && npx tsc -b 2>&1)",
       "WebFetch(domain:steamcommunity.com)",
-      "WebFetch(domain:satisfactory.kushcord.de)"
+      "WebFetch(domain:satisfactory.kushcord.de)",
+      "WebFetch(domain:satisfactory-calculator.com)",
+      "WebFetch(domain:satisfactory.fandom.com)"
     ]
   }
 }

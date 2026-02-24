@@ -12,7 +12,20 @@ export type BuildingType =
   | 'refinery'
   | 'packager'
   | 'blender'
-  | 'particle_accelerator';
+  | 'particle_accelerator'
+  | 'converter'
+  | 'quantum_encoder'
+  | 'water_extractor'
+  | 'oil_extractor'
+  | 'coal_generator'
+  | 'fuel_generator'
+  | 'nuclear_power_plant'
+  | 'biomass_burner'
+  | 'geothermal_generator'
+  | 'awesome_sink'
+  | 'storage_container'
+  | 'fluid_buffer'
+  | 'pipeline_junction';
 
 export type MkLevel = 1 | 2 | 3;
 
@@ -55,6 +68,10 @@ export interface PlacedBuilding {
 
 export type BeltMk = 1 | 2 | 3 | 4 | 5 | 6;
 
+export type PipeMk = 1 | 2;
+
+export type ConnectionKind = 'belt' | 'pipe';
+
 export interface Connection {
   id: string;
   fromBuildingId: string;
@@ -62,26 +79,35 @@ export interface Connection {
   toBuildingId: string;
   toPortIndex: number;
   beltMk: BeltMk;
+  pipeMk: PipeMk;
+  connectionKind: ConnectionKind;
 }
 
 // === Game Data Types ===
+
+export type PowerType = 'consumer' | 'producer' | 'none';
 
 export interface BuildingDef {
   type: BuildingType;
   label: string;
   description: string;
-  basePower: number; // MW
+  basePower: number; // MW (base for consumers, generated for producers)
+  /** For buildings with MK-dependent power (e.g. miners): power per MK level */
+  powerPerMk?: Record<number, number>;
+  /** For variable-power buildings (PA, Converter, QE): min/max per recipe is stored on RecipeDef */
   maxMkLevel: MkLevel;
   ports: PortDefinition[];
   isLogistics: boolean;
   gridWidth: number;
   gridHeight: number;
-  category: 'extraction' | 'smelting' | 'production' | 'processing' | 'logistics';
+  category: 'extraction' | 'smelting' | 'production' | 'processing' | 'logistics' | 'power' | 'storage';
+  powerType: PowerType;
 }
 
 export interface ItemDef {
   id: string;
   label: string;
+  isFluid: boolean;
 }
 
 export interface RecipeInput {
@@ -101,12 +127,23 @@ export interface RecipeDef {
   cycleTime: number; // seconds
   inputs: RecipeInput[];
   outputs: RecipeOutput[];
+  isAlternate: boolean;
+  /** For variable-power buildings: min power MW */
+  minPower?: number;
+  /** For variable-power buildings: max power MW */
+  maxPower?: number;
 }
 
 export interface BeltDef {
   mk: BeltMk;
   label: string;
   throughput: number; // items/min
+}
+
+export interface PipeDef {
+  mk: PipeMk;
+  label: string;
+  throughput: number; // m³/min
 }
 
 // === Factory Layout (Export/Import) ===
@@ -138,7 +175,8 @@ export interface ProjectData {
 
 export type PlacementMode =
   | { kind: 'building'; buildingType: BuildingType; rotation: Rotation }
-  | { kind: 'belt'; beltMk: BeltMk };
+  | { kind: 'belt'; beltMk: BeltMk }
+  | { kind: 'pipe'; pipeMk: PipeMk };
 
 export interface ConnectionDraft {
   fromBuildingId: string;
@@ -149,12 +187,35 @@ export interface ConnectionDraft {
 
 export interface ProductionRate {
   itemId: string;
-  rate: number; // items/min
+  rate: number; // items/min or m³/min for fluids
 }
 
 export interface BuildingProduction {
   buildingId: string;
   inputs: ProductionRate[];
   outputs: ProductionRate[];
-  power: number; // MW
+  power: number; // MW (positive = consumption, negative = production)
+}
+
+// === Solver Types ===
+
+export interface SolverStep {
+  itemId: string;
+  recipeId: string;
+  buildingType: BuildingType;
+  buildingCount: number;
+  buildingCountCeil: number;
+  clockPercent: number;
+  inputRates: ProductionRate[];
+  outputRates: ProductionRate[];
+  powerPerBuilding: number;
+  totalPower: number;
+}
+
+export interface SolverResult {
+  steps: SolverStep[];
+  rawResources: ProductionRate[];
+  totalPower: number;
+  totalBuildings: number;
+  excess: ProductionRate[];
 }

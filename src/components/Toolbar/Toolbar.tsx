@@ -3,7 +3,7 @@ import { useProjectsStore, saveProjectData } from '../../store/projectsStore';
 import { exportFactory, importFactory, downloadJson } from '../../utils/serialization';
 import { useRef, useState, useEffect } from 'react';
 
-export default function Toolbar() {
+export default function Toolbar({ onOpenSolver }: { onOpenSolver: () => void }) {
   const buildings = useStore((s) => s.buildings);
   const connections = useStore((s) => s.connections);
   const loadBuildings = useStore((s) => s.loadBuildings);
@@ -177,6 +177,16 @@ export default function Toolbar() {
         onChange={handleFileChange}
         className="hidden"
       />
+
+      <div className="w-px h-5 bg-gray-800" />
+
+      <button
+        onClick={onOpenSolver}
+        className="px-3 py-1.5 text-xs font-medium rounded-md border border-amber-500/50 text-amber-400
+          hover:bg-amber-500/10 transition-colors"
+      >
+        Solver
+      </button>
 
       <div className="w-px h-5 bg-gray-800" />
 

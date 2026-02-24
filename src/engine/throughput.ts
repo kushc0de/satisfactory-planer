@@ -1,22 +1,34 @@
-import type { Connection, PlacedBuilding, BeltMk } from '../types';
+import type { Connection, PlacedBuilding, BeltMk, PipeMk } from '../types';
 import { BELTS } from '../data/belts';
+import { PIPES } from '../data/pipes';
 import { calcBuildingProduction } from './production';
 
 export interface BottleneckInfo {
   connectionId: string;
-  beltCapacity: number;
+  capacity: number;
   requiredRate: number;
   isBottleneck: boolean;
+  connectionKind: 'belt' | 'pipe';
 }
 
 /**
- * Check if a belt connection is a bottleneck.
+ * Get the capacity for a connection based on its kind.
+ */
+function getConnectionCapacity(connection: Connection): number {
+  if (connection.connectionKind === 'pipe') {
+    return PIPES[connection.pipeMk].throughput;
+  }
+  return BELTS[connection.beltMk].throughput;
+}
+
+/**
+ * Check if a connection is a bottleneck.
  */
 export function checkBottleneck(
   connection: Connection,
   buildings: PlacedBuilding[],
 ): BottleneckInfo {
-  const beltCapacity = BELTS[connection.beltMk].throughput;
+  const capacity = getConnectionCapacity(connection);
   const fromBuilding = buildings.find((b) => b.id === connection.fromBuildingId);
 
   let requiredRate = 0;
@@ -26,16 +38,16 @@ export function checkBottleneck(
     if (prod.outputs[outputPort]) {
       requiredRate = prod.outputs[outputPort].rate;
     } else if (prod.outputs.length > 0) {
-      // For single-output buildings, use the first output
       requiredRate = prod.outputs[0].rate;
     }
   }
 
   return {
     connectionId: connection.id,
-    beltCapacity,
+    capacity,
     requiredRate,
-    isBottleneck: requiredRate > beltCapacity,
+    isBottleneck: requiredRate > capacity,
+    connectionKind: connection.connectionKind,
   };
 }
 
@@ -52,9 +64,17 @@ export function findAllBottlenecks(
 }
 
 /**
- * Calculate effective throughput (limited by belt).
+ * Calculate effective throughput (limited by belt/pipe).
  */
 export function effectiveThroughput(rate: number, beltMk: BeltMk): number {
   const cap = BELTS[beltMk].throughput;
+  return Math.min(rate, cap);
+}
+
+/**
+ * Calculate effective pipe throughput.
+ */
+export function effectivePipeThroughput(rate: number, pipeMk: PipeMk): number {
+  const cap = PIPES[pipeMk].throughput;
   return Math.min(rate, cap);
 }

@@ -1,10 +1,13 @@
 import { BUILDING_LIST } from '../../data/buildings';
 import { BELTS } from '../../data/belts';
-import type { BeltMk, BuildingDef } from '../../types';
+import { PIPES } from '../../data/pipes';
+import type { BeltMk, PipeMk, BuildingDef } from '../../types';
 import PaletteItem from './PaletteItem';
 import BeltPaletteItem from './BeltPaletteItem';
+import PipePaletteItem from './PipePaletteItem';
 
 const BELT_LIST = ([1, 2, 3, 4, 5, 6] as BeltMk[]).map((mk) => BELTS[mk]);
+const PIPE_LIST = ([1, 2] as PipeMk[]).map((mk) => PIPES[mk]);
 
 const CATEGORIES: { key: BuildingDef['category']; label: string }[] = [
   { key: 'extraction', label: 'Abbau' },
@@ -12,6 +15,8 @@ const CATEGORIES: { key: BuildingDef['category']; label: string }[] = [
   { key: 'production', label: 'Fertigung' },
   { key: 'processing', label: 'Verarbeitung' },
   { key: 'logistics', label: 'Logistik' },
+  { key: 'storage', label: 'Lager' },
+  { key: 'power', label: 'Energie' },
 ];
 
 export default function BuildingPalette() {
@@ -43,6 +48,16 @@ export default function BuildingPalette() {
           </div>
           {BELT_LIST.map((belt) => (
             <BeltPaletteItem key={belt.mk} belt={belt} />
+          ))}
+        </div>
+
+        {/* Pipe section */}
+        <div className="pt-3 mt-2 border-t border-gray-800/60">
+          <div className="px-2 pb-2">
+            <h3 className="text-xs font-bold text-cyan-500/80 uppercase tracking-wider">Pipeline</h3>
+          </div>
+          {PIPE_LIST.map((pipe) => (
+            <PipePaletteItem key={pipe.mk} pipe={pipe} />
           ))}
         </div>
       </div>
