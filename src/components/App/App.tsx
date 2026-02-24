@@ -11,6 +11,7 @@ import PropertiesPanel from '../Properties/PropertiesPanel';
 import FactoryMetrics from '../Overlay/FactoryMetrics';
 
 const snapModifier = createSnapModifier(GRID_SIZE);
+const modifiers = [snapModifier];
 
 export default function App() {
   const addBuilding = useStore((s) => s.addBuilding);
@@ -57,7 +58,7 @@ export default function App() {
   };
 
   return (
-    <DndContext modifiers={[snapModifier]} onDragEnd={handleDragEnd}>
+    <DndContext modifiers={modifiers} onDragEnd={handleDragEnd}>
       <div className="h-screen w-screen flex flex-col overflow-hidden bg-[#0a0a15]">
         <Toolbar />
         <div className="flex flex-1 overflow-hidden">

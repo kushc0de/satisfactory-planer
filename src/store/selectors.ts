@@ -1,4 +1,5 @@
 import { useStore, type StoreState } from './store';
+import { useShallow } from 'zustand/react/shallow';
 import { calcBuildingPower, calcTotalPower } from '../engine/power';
 import { calcBuildingProduction } from '../engine/production';
 import { findAllBottlenecks } from '../engine/throughput';
@@ -25,25 +26,31 @@ export function useConnectionCount(): number {
 }
 
 export function useBottlenecks() {
-  return useStore((s) => findAllBottlenecks(s.connections, s.buildings));
+  return useStore(
+    useShallow((s) => findAllBottlenecks(s.connections, s.buildings)),
+  );
 }
 
 export function useBuildingProduction(buildingId: string): BuildingProduction | null {
-  return useStore((s) => {
-    const building = s.buildings.find((b) => b.id === buildingId);
-    if (!building) return null;
-    const prod = calcBuildingProduction(building);
-    const power = calcBuildingPower(building);
-    return { buildingId, ...prod, power };
-  });
+  return useStore(
+    useShallow((s) => {
+      const building = s.buildings.find((b) => b.id === buildingId);
+      if (!building) return null;
+      const prod = calcBuildingProduction(building);
+      const power = calcBuildingPower(building);
+      return { buildingId, ...prod, power };
+    }),
+  );
 }
 
 export function useAllBuildingProductions(): BuildingProduction[] {
-  return useStore((s) =>
-    s.buildings.map((b) => {
-      const prod = calcBuildingProduction(b);
-      const power = calcBuildingPower(b);
-      return { buildingId: b.id, ...prod, power };
-    }),
+  return useStore(
+    useShallow((s) =>
+      s.buildings.map((b) => {
+        const prod = calcBuildingProduction(b);
+        const power = calcBuildingPower(b);
+        return { buildingId: b.id, ...prod, power };
+      }),
+    ),
   );
 }
