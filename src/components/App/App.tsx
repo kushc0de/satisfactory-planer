@@ -15,24 +15,21 @@ const modifiers = [snapModifier];
 export default function App() {
   const moveBuilding = useStore((s) => s.moveBuilding);
   const buildings = useStore((s) => s.buildings);
-  const cancelConnectionDraft = useStore((s) => s.cancelConnectionDraft);
-  const cancelPlacement = useStore((s) => s.cancelPlacement);
-  const placementMode = useStore((s) => s.placementMode);
-
-  // ESC key to cancel connection draft or placement mode
+  // ESC key: priority-based cancellation using getState() to avoid stale closures
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (placementMode) {
-          cancelPlacement();
-        } else {
-          cancelConnectionDraft();
+        const state = useStore.getState();
+        if (state.connectionDraft) {
+          state.cancelConnectionDraft();
+        } else if (state.placementMode) {
+          state.cancelPlacement();
         }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [cancelConnectionDraft, cancelPlacement, placementMode]);
+  }, []);
 
   // DndContext now only handles moving already-placed buildings
   const handleDragEnd = (event: DragEndEvent) => {

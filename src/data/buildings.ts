@@ -10,8 +10,8 @@ export const BUILDINGS = {
     inputCount: 0,
     outputCount: 1,
     isLogistics: false,
-    gridWidth: 5,
-    gridHeight: 6,
+    gridWidth: 1,
+    gridHeight: 2,
   },
   smelter: {
     type: 'smelter',
@@ -22,8 +22,8 @@ export const BUILDINGS = {
     inputCount: 1,
     outputCount: 1,
     isLogistics: false,
-    gridWidth: 5,
-    gridHeight: 4,
+    gridWidth: 1,
+    gridHeight: 2,
   },
   constructor: {
     type: 'constructor',
@@ -34,8 +34,8 @@ export const BUILDINGS = {
     inputCount: 1,
     outputCount: 1,
     isLogistics: false,
-    gridWidth: 5,
-    gridHeight: 4,
+    gridWidth: 1,
+    gridHeight: 2,
   },
   assembler: {
     type: 'assembler',
@@ -46,8 +46,8 @@ export const BUILDINGS = {
     inputCount: 2,
     outputCount: 1,
     isLogistics: false,
-    gridWidth: 6,
-    gridHeight: 5,
+    gridWidth: 2,
+    gridHeight: 2,
   },
   foundry: {
     type: 'foundry',
@@ -58,8 +58,8 @@ export const BUILDINGS = {
     inputCount: 2,
     outputCount: 1,
     isLogistics: false,
-    gridWidth: 6,
-    gridHeight: 5,
+    gridWidth: 2,
+    gridHeight: 2,
   },
   splitter: {
     type: 'splitter',
@@ -70,8 +70,8 @@ export const BUILDINGS = {
     inputCount: 1,
     outputCount: 3,
     isLogistics: true,
-    gridWidth: 3,
-    gridHeight: 3,
+    gridWidth: 1,
+    gridHeight: 1,
   },
   merger: {
     type: 'merger',
@@ -82,8 +82,8 @@ export const BUILDINGS = {
     inputCount: 3,
     outputCount: 1,
     isLogistics: true,
-    gridWidth: 3,
-    gridHeight: 3,
+    gridWidth: 1,
+    gridHeight: 1,
   },
 } as const satisfies Record<string, BuildingDef>;
 

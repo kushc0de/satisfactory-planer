@@ -1,4 +1,4 @@
-export const GRID_SIZE = 32; // pixels per grid unit
+export const GRID_SIZE = 64; // pixels per grid unit (1 tile = 1 foundation = 8m)
 
 export function gridToPixel(gridUnits: number): number {
   return gridUnits * GRID_SIZE;

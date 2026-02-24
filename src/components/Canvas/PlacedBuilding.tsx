@@ -4,6 +4,7 @@ import type { PlacedBuilding as PlacedBuildingType } from '../../types';
 import { BUILDINGS } from '../../data/buildings';
 import { gridToPixel, GRID_SIZE } from '../../utils/grid';
 import { useStore } from '../../store/store';
+import { usePlacementMode } from '../../store/selectors';
 import { calcBuildingProduction } from '../../engine/production';
 import { calcBuildingPower } from '../../engine/power';
 import BuildingIcon from '../Icons/BuildingIcon';
@@ -17,14 +18,17 @@ interface Props {
 export default function PlacedBuilding({ building }: Props) {
   const selectedId = useStore((s) => s.selectedBuildingId);
   const selectBuilding = useStore((s) => s.selectBuilding);
+  const placementMode = usePlacementMode();
   const isSelected = selectedId === building.id;
   const def = BUILDINGS[building.type];
 
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
+  // Bug 6: disable dragging when placement mode is active
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: building.id,
     data: { type: 'placed', buildingId: building.id },
+    disabled: placementMode !== null,
   });
 
   const pixelX = gridToPixel(building.gridX);

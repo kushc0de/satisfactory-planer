@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { useStore } from '../../store/store';
 import { usePlacementMode } from '../../store/selectors';
 import { pixelToGrid, GRID_SIZE } from '../../utils/grid';
+import { BUILDINGS } from '../../data/buildings';
 import GridBackground from './GridBackground';
 import PlacedBuilding from './PlacedBuilding';
 import ConnectionLine from './ConnectionLine';
@@ -20,33 +21,64 @@ export default function Canvas() {
 
   const [ghostPos, setGhostPos] = useState<{ gridX: number; gridY: number } | null>(null);
 
+  // Bug 7: ref mirrors ghostPos so handleCanvasClick doesn't need ghostPos in deps
+  const ghostPosRef = useRef(ghostPos);
+  ghostPosRef.current = ghostPos;
+
+  // Bug 3: stable ref for scroll container
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const { setNodeRef } = useDroppable({ id: 'canvas' });
 
+  const combinedRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      setNodeRef(node);
+      (scrollContainerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    },
+    [setNodeRef],
+  );
+
+  // Bug 7: ghostPos removed from deps — setGhostPos(null) is a no-op when already null
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!placementMode || placementMode.kind !== 'building') {
-        if (ghostPos) setGhostPos(null);
+        setGhostPos(null);
         return;
       }
-      const rect = e.currentTarget.getBoundingClientRect();
-      const scrollLeft = e.currentTarget.scrollLeft;
-      const scrollTop = e.currentTarget.scrollTop;
+      // Bug 3: use stable ref instead of e.currentTarget
+      const container = scrollContainerRef.current;
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      const scrollLeft = container.scrollLeft;
+      const scrollTop = container.scrollTop;
       const x = e.clientX - rect.left + scrollLeft;
       const y = e.clientY - rect.top + scrollTop;
-      const gridX = Math.max(0, pixelToGrid(x) - 1);
-      const gridY = Math.max(0, pixelToGrid(y) - 1);
+
+      // Bug 2: correct centering using building definition
+      const def = BUILDINGS[placementMode.buildingType];
+      const gridX = Math.max(0, pixelToGrid(x) - Math.floor(def.gridWidth / 2));
+      const gridY = Math.max(0, pixelToGrid(y) - Math.floor(def.gridHeight / 2));
       setGhostPos({ gridX, gridY });
     },
-    [placementMode, ghostPos],
+    [placementMode],
   );
 
+  // Bug 7: ghostPos removed from deps — uses ghostPosRef instead
+  // Bug 4: draft cancellation BEFORE belt-mode early return
   const handleCanvasClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      // Building placement mode
-      if (placementMode?.kind === 'building' && ghostPos) {
+      // Bug 4: cancel draft on any canvas click, even in belt mode
+      const draft = useStore.getState().connectionDraft;
+      if (draft) {
+        cancelConnectionDraft();
+        return;
+      }
+
+      // Building placement mode — read from ref to avoid dep on ghostPos
+      const currentGhost = ghostPosRef.current;
+      if (placementMode?.kind === 'building' && currentGhost) {
         e.stopPropagation();
-        addBuilding(placementMode.buildingType, ghostPos.gridX, ghostPos.gridY);
-        // Stay in placement mode for multiple placements
+        addBuilding(placementMode.buildingType, currentGhost.gridX, currentGhost.gridY);
         return;
       }
 
@@ -55,13 +87,9 @@ export default function Canvas() {
         return;
       }
 
-      if (connectionDraft) {
-        cancelConnectionDraft();
-      } else {
-        clearSelection();
-      }
+      clearSelection();
     },
-    [placementMode, ghostPos, connectionDraft, addBuilding, cancelConnectionDraft, clearSelection],
+    [placementMode, addBuilding, cancelConnectionDraft, clearSelection],
   );
 
   const handleContextMenu = useCallback(
@@ -83,7 +111,7 @@ export default function Canvas() {
 
   return (
     <div
-      ref={setNodeRef}
+      ref={combinedRef}
       className={`flex-1 relative overflow-auto bg-[#0a0a15] ${
         isPlacing ? 'cursor-crosshair' : isBeltMode ? 'cursor-pointer' : ''
       }`}

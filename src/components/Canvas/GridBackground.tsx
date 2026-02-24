@@ -24,11 +24,11 @@ export default function GridBackground() {
           <rect width={TILE} height={TILE} fill={TILE_A} />
           {/* Subtle cross */}
           <line
-            x1={TILE / 2} y1={2} x2={TILE / 2} y2={TILE - 2}
+            x1={TILE / 2} y1={4} x2={TILE / 2} y2={TILE - 4}
             stroke="rgba(255,255,255,0.025)" strokeWidth="0.5"
           />
           <line
-            x1={2} y1={TILE / 2} x2={TILE - 2} y2={TILE / 2}
+            x1={4} y1={TILE / 2} x2={TILE - 4} y2={TILE / 2}
             stroke="rgba(255,255,255,0.025)" strokeWidth="0.5"
           />
           {/* Tile edge lines */}
@@ -46,11 +46,11 @@ export default function GridBackground() {
         >
           <rect width={TILE} height={TILE} fill={TILE_B} />
           <line
-            x1={TILE / 2} y1={2} x2={TILE / 2} y2={TILE - 2}
+            x1={TILE / 2} y1={4} x2={TILE / 2} y2={TILE - 4}
             stroke="rgba(255,255,255,0.025)" strokeWidth="0.5"
           />
           <line
-            x1={2} y1={TILE / 2} x2={TILE - 2} y2={TILE / 2}
+            x1={4} y1={TILE / 2} x2={TILE - 4} y2={TILE / 2}
             stroke="rgba(255,255,255,0.025)" strokeWidth="0.5"
           />
           <path
@@ -75,13 +75,13 @@ export default function GridBackground() {
             [0, TILE].map((ty) => (
               <g key={`${tx}-${ty}`}>
                 <line
-                  x1={tx + TILE / 2} y1={ty + 4}
-                  x2={tx + TILE / 2} y2={ty + TILE - 4}
+                  x1={tx + TILE / 2} y1={ty + 8}
+                  x2={tx + TILE / 2} y2={ty + TILE - 8}
                   stroke="rgba(255,255,255,0.025)" strokeWidth="0.5"
                 />
                 <line
-                  x1={tx + 4} y1={ty + TILE / 2}
-                  x2={tx + TILE - 4} y2={ty + TILE / 2}
+                  x1={tx + 8} y1={ty + TILE / 2}
+                  x2={tx + TILE - 8} y2={ty + TILE / 2}
                   stroke="rgba(255,255,255,0.025)" strokeWidth="0.5"
                 />
               </g>

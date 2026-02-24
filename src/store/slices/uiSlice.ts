@@ -38,5 +38,5 @@ export const createUiSlice: StateCreator<UiSlice, [], [], UiSlice> = (set) => ({
   setPlacementMode: (mode) =>
     set({ placementMode: mode, connectionDraft: null }),
 
-  cancelPlacement: () => set({ placementMode: null }),
+  cancelPlacement: () => set({ placementMode: null, connectionDraft: null }),
 });

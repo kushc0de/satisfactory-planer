@@ -30,32 +30,21 @@ export default function PortDot({ buildingId, portType, portIndex, side, offset,
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (isBeltMode && !isDraftActive && isSource) {
-      // Belt mode: start connection draft from output port
-      startConnectionDraft(buildingId, portIndex);
-    } else if (isBeltMode && isDraftActive && isTarget) {
-      // Belt mode: complete connection with chosen belt MK
+    if (isDraftActive && isTarget) {
+      // 1. Draft active + target port → complete connection
       addConnection(
         connectionDraft!.fromBuildingId,
         connectionDraft!.fromPortIndex,
         buildingId,
         portIndex,
-        placementMode.beltMk,
+        placementMode?.kind === 'belt' ? placementMode.beltMk : undefined,
       );
       cancelConnectionDraft();
-    } else if (!isBeltMode && !isDraftActive && isSource) {
+    } else if (!isDraftActive && isSource) {
+      // 2. No draft + source port → start draft
       startConnectionDraft(buildingId, portIndex);
-    } else if (isDraftActive && isTarget) {
-      // Complete the connection (default MK1 or belt MK if in belt mode)
-      addConnection(
-        connectionDraft!.fromBuildingId,
-        connectionDraft!.fromPortIndex,
-        buildingId,
-        portIndex,
-        isBeltMode ? placementMode.beltMk : undefined,
-      );
-      cancelConnectionDraft();
     } else if (isDraftActive) {
+      // 3. Draft active + wrong port type → cancel
       cancelConnectionDraft();
     }
   };
