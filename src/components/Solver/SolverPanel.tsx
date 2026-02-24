@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { nanoid } from 'nanoid';
 import { ITEMS } from '../../data/items';
 import { BUILDINGS } from '../../data/buildings';
 import { RECIPES } from '../../data/recipes/index';
@@ -7,7 +8,7 @@ import { solve, type SolverOptions, type OverclockStrategy } from '../../engine/
 import { generateLayout } from '../../engine/layout';
 import { generateConnections } from '../../engine/autoConnect';
 import { useStore } from '../../store/store';
-import type { SolverResult, MkLevel, Purity, BeltMk, PipeMk } from '../../types';
+import type { SolverResult, MkLevel, Purity, PlacedBuilding, Connection, ConnectionKind } from '../../types';
 
 const PRODUCIBLE_ITEMS = Object.values(ITEMS)
   .filter((item) => {
@@ -25,13 +26,6 @@ export default function SolverPanel({ onClose }: { onClose: () => void }) {
   const [minerMk, setMinerMk] = useState<MkLevel>(1);
   const [minerPurity, setMinerPurity] = useState<Purity>('normal');
 
-  const addBuilding = useStore((s) => s.addBuilding);
-  const setRecipe = useStore((s) => s.setRecipe);
-  const setOverclock = useStore((s) => s.setOverclock);
-  const setMkLevel = useStore((s) => s.setMkLevel);
-  const setOreType = useStore((s) => s.setOreType);
-  const setPurity = useStore((s) => s.setPurity);
-  const addConnection = useStore((s) => s.addConnection);
   const buildings = useStore((s) => s.buildings);
 
   const filteredItems = useMemo(() => {
@@ -56,59 +50,80 @@ export default function SolverPanel({ onClose }: { onClose: () => void }) {
   const handleTransferToLayout = () => {
     if (!result) return;
 
+    // Read current state once (non-reactive)
+    const currentBuildings = useStore.getState().buildings;
+    const currentConnections = useStore.getState().connections;
+
     // Find free area below existing buildings
     let maxY = 0;
-    for (const b of buildings) {
+    for (const b of currentBuildings) {
       const def = BUILDINGS[b.type];
       const bottomEdge = b.gridY + (def?.gridHeight ?? 1);
       if (bottomEdge > maxY) maxY = bottomEdge;
     }
-    const startY = buildings.length > 0 ? maxY + 3 : 0;
+    const startY = currentBuildings.length > 0 ? maxY + 3 : 0;
 
-    // Generate layout
+    // Generate layout and connections
     const placements = generateLayout(result, { startX: 0, startY });
-
-    // Generate connections
     const connectionInstructions = generateConnections(placements, result);
 
-    // Place buildings and collect their IDs
+    // Build all PlacedBuilding objects in memory
+    const newBuildings: PlacedBuilding[] = [];
     const placedIds: string[] = [];
-    for (const p of placements) {
-      const id = addBuilding(p.buildingType, p.gridX, p.gridY);
-      placedIds.push(id);
 
-      if (p.recipeId) {
-        setRecipe(id, p.recipeId);
-      }
-      if (p.overclock !== 100) {
-        setOverclock(id, p.overclock);
-      }
-      if (p.mkLevel !== 1) {
-        setMkLevel(id, p.mkLevel);
-      }
-      if (p.oreType) {
-        setOreType(id, p.oreType);
-      }
-      if (p.purity !== 'normal') {
-        setPurity(id, p.purity);
-      }
+    for (const p of placements) {
+      const id = nanoid();
+      placedIds.push(id);
+      newBuildings.push({
+        id,
+        type: p.buildingType,
+        gridX: p.gridX,
+        gridY: p.gridY,
+        mkLevel: p.mkLevel,
+        overclock: Math.max(1, Math.min(250, p.overclock)),
+        purity: p.purity,
+        recipeId: p.recipeId,
+        rotation: 0,
+        oreType: p.oreType,
+      });
     }
 
-    // Create connections
+    // Build all Connection objects in memory
+    const newConnections: Connection[] = [];
     for (const c of connectionInstructions) {
       const fromId = placedIds[c.fromPlacementIndex];
       const toId = placedIds[c.toPlacementIndex];
-      if (fromId && toId) {
-        addConnection(
-          fromId,
-          c.fromPortIndex,
-          toId,
-          c.toPortIndex,
-          c.beltMk as BeltMk,
-          c.pipeMk as PipeMk,
-        );
+      if (!fromId || !toId) continue;
+
+      const fromBuilding = newBuildings[c.fromPlacementIndex];
+      const toBuilding = newBuildings[c.toPlacementIndex];
+      const fromDef = BUILDINGS[fromBuilding.type];
+      const toDef = BUILDINGS[toBuilding.type];
+      const outputPorts = fromDef.ports.filter((p) => p.type === 'output');
+      const inputPorts = toDef.ports.filter((p) => p.type === 'input');
+      const fromPort = outputPorts[c.fromPortIndex];
+      const toPort = inputPorts[c.toPortIndex];
+
+      let connectionKind: ConnectionKind = 'belt';
+      if (fromPort?.category === 'pipe' || toPort?.category === 'pipe') {
+        connectionKind = 'pipe';
       }
+
+      newConnections.push({
+        id: nanoid(),
+        fromBuildingId: fromId,
+        fromPortIndex: c.fromPortIndex,
+        toBuildingId: toId,
+        toPortIndex: c.toPortIndex,
+        beltMk: c.beltMk,
+        pipeMk: c.pipeMk,
+        connectionKind,
+      });
     }
+
+    // Two atomic store updates instead of hundreds
+    useStore.getState().loadBuildings([...currentBuildings, ...newBuildings]);
+    useStore.getState().loadConnections([...currentConnections, ...newConnections]);
 
     onClose();
   };
