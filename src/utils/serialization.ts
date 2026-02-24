@@ -1,11 +1,14 @@
 import type { FactoryLayout, PlacedBuilding, Connection } from '../types';
 
-export function exportFactory(buildings: PlacedBuilding[], connections: Connection[]): string {
+export function exportFactory(buildings: PlacedBuilding[], connections: Connection[], projectName?: string): string {
   const layout: FactoryLayout = {
     version: 2,
     buildings,
     connections,
   };
+  if (projectName) {
+    layout.projectName = projectName;
+  }
   return JSON.stringify(layout, null, 2);
 }
 

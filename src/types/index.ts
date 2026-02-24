@@ -115,6 +115,23 @@ export interface FactoryLayout {
   version: number;
   buildings: PlacedBuilding[];
   connections: Connection[];
+  projectName?: string;
+}
+
+// === Project Management ===
+
+export interface ProjectMeta {
+  id: string;
+  name: string;
+  createdAt: number;
+  updatedAt: number;
+  buildingCount: number;
+}
+
+export interface ProjectData {
+  version: number;
+  buildings: PlacedBuilding[];
+  connections: Connection[];
 }
 
 // === UI State ===
