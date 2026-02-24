@@ -18,7 +18,7 @@ export const ASSEMBLER_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'rotor', amount: 1 }],
   },
   smart_plating: {
-    id: 'smart_plating', label: 'Intelligente Platte', buildingType: 'assembler', cycleTime: 30, isAlternate: false,
+    id: 'smart_plating', label: 'Intelligente Beschichtung', buildingType: 'assembler', cycleTime: 30, isAlternate: false,
     inputs: [{ itemId: 'reinforced_iron_plate', amount: 1 }, { itemId: 'rotor', amount: 1 }],
     outputs: [{ itemId: 'smart_plating', amount: 1 }],
   },
@@ -33,7 +33,7 @@ export const ASSEMBLER_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'motor', amount: 1 }],
   },
   circuit_board: {
-    id: 'circuit_board', label: 'Leiterplatte', buildingType: 'assembler', cycleTime: 8, isAlternate: false,
+    id: 'circuit_board', label: 'Platine', buildingType: 'assembler', cycleTime: 8, isAlternate: false,
     inputs: [{ itemId: 'copper_sheet', amount: 2 }, { itemId: 'plastic', amount: 4 }],
     outputs: [{ itemId: 'circuit_board', amount: 1 }],
   },
@@ -43,7 +43,7 @@ export const ASSEMBLER_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'encased_industrial_beam', amount: 1 }],
   },
   versatile_framework: {
-    id: 'versatile_framework', label: 'Vielseitiges Rahmenwerk', buildingType: 'assembler', cycleTime: 24, isAlternate: false,
+    id: 'versatile_framework', label: 'Mehrzweckgerüst', buildingType: 'assembler', cycleTime: 24, isAlternate: false,
     inputs: [{ itemId: 'modular_frame', amount: 1 }, { itemId: 'steel_beam', amount: 12 }],
     outputs: [{ itemId: 'versatile_framework', amount: 2 }],
   },
@@ -73,7 +73,7 @@ export const ASSEMBLER_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'heat_sink', amount: 1 }],
   },
   assembly_director_system: {
-    id: 'assembly_director_system', label: 'Montage-Direktor-System', buildingType: 'assembler', cycleTime: 80, isAlternate: false,
+    id: 'assembly_director_system', label: 'Montage-Leitsystem', buildingType: 'assembler', cycleTime: 80, isAlternate: false,
     inputs: [{ itemId: 'adaptive_control_unit', amount: 2 }, { itemId: 'supercomputer', amount: 1 }],
     outputs: [{ itemId: 'assembly_director_system', amount: 1 }],
   },
@@ -83,7 +83,7 @@ export const ASSEMBLER_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'pressure_conversion_cube', amount: 1 }],
   },
   magnetic_field_generator: {
-    id: 'magnetic_field_generator', label: 'Magnetfeldgenerator', buildingType: 'assembler', cycleTime: 120, isAlternate: false,
+    id: 'magnetic_field_generator', label: 'Magnetfeld-Generator', buildingType: 'assembler', cycleTime: 120, isAlternate: false,
     inputs: [{ itemId: 'versatile_framework', amount: 5 }, { itemId: 'electromagnetic_control_rod', amount: 2 }],
     outputs: [{ itemId: 'magnetic_field_generator', amount: 2 }],
   },
@@ -145,17 +145,17 @@ export const ASSEMBLER_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'rotor', amount: 1 }],
   },
   alt_electrode_circuit_board: {
-    id: 'alt_electrode_circuit_board', label: 'Elektroden-Leiterplatte (Alt)', buildingType: 'assembler', cycleTime: 12, isAlternate: true,
+    id: 'alt_electrode_circuit_board', label: 'Elektroden-Platine (Alt)', buildingType: 'assembler', cycleTime: 12, isAlternate: true,
     inputs: [{ itemId: 'rubber', amount: 4 }, { itemId: 'petroleum_coke', amount: 8 }],
     outputs: [{ itemId: 'circuit_board', amount: 1 }],
   },
   alt_silicon_circuit_board: {
-    id: 'alt_silicon_circuit_board', label: 'Silizium-Leiterplatte (Alt)', buildingType: 'assembler', cycleTime: 24, isAlternate: true,
+    id: 'alt_silicon_circuit_board', label: 'Silizium-Platine (Alt)', buildingType: 'assembler', cycleTime: 24, isAlternate: true,
     inputs: [{ itemId: 'copper_sheet', amount: 11 }, { itemId: 'silica', amount: 11 }],
     outputs: [{ itemId: 'circuit_board', amount: 5 }],
   },
   alt_caterium_circuit_board: {
-    id: 'alt_caterium_circuit_board', label: 'Caterium-Leiterplatte (Alt)', buildingType: 'assembler', cycleTime: 48, isAlternate: true,
+    id: 'alt_caterium_circuit_board', label: 'Caterium-Platine (Alt)', buildingType: 'assembler', cycleTime: 48, isAlternate: true,
     inputs: [{ itemId: 'plastic', amount: 10 }, { itemId: 'quickwire', amount: 30 }],
     outputs: [{ itemId: 'circuit_board', amount: 7 }],
   },
@@ -185,7 +185,7 @@ export const ASSEMBLER_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'heat_sink', amount: 1 }],
   },
   alt_plastic_ai_limiter: {
-    id: 'alt_plastic_ai_limiter', label: 'Plastik-KI-Begrenzer (Alt)', buildingType: 'assembler', cycleTime: 15, isAlternate: true,
+    id: 'alt_plastic_ai_limiter', label: 'Kunststoff-KI-Begrenzer (Alt)', buildingType: 'assembler', cycleTime: 15, isAlternate: true,
     inputs: [{ itemId: 'quickwire', amount: 30 }, { itemId: 'plastic', amount: 7 }],
     outputs: [{ itemId: 'ai_limiter', amount: 2 }],
   },

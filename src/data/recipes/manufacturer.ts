@@ -13,7 +13,7 @@ export const MANUFACTURER_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'heavy_modular_frame', amount: 1 }],
   },
   crystal_oscillator: {
-    id: 'crystal_oscillator', label: 'Kristalloszillator', buildingType: 'manufacturer', cycleTime: 120, isAlternate: false,
+    id: 'crystal_oscillator', label: 'Quarzoszillator', buildingType: 'manufacturer', cycleTime: 120, isAlternate: false,
     inputs: [{ itemId: 'quartz_crystal', amount: 36 }, { itemId: 'cable', amount: 28 }, { itemId: 'reinforced_iron_plate', amount: 5 }],
     outputs: [{ itemId: 'crystal_oscillator', amount: 2 }],
   },
@@ -78,7 +78,7 @@ export const MANUFACTURER_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'singularity_cell', amount: 10 }],
   },
   thermal_propulsion_rocket: {
-    id: 'thermal_propulsion_rocket', label: 'Thermische Antriebsrakete', buildingType: 'manufacturer', cycleTime: 120, isAlternate: false,
+    id: 'thermal_propulsion_rocket', label: 'Thermaler Raketenantrieb', buildingType: 'manufacturer', cycleTime: 120, isAlternate: false,
     inputs: [{ itemId: 'modular_engine', amount: 5 }, { itemId: 'turbo_motor', amount: 2 }, { itemId: 'cooling_system', amount: 6 }, { itemId: 'fused_modular_frame', amount: 2 }],
     outputs: [{ itemId: 'thermal_propulsion_rocket', amount: 2 }],
   },
@@ -105,12 +105,12 @@ export const MANUFACTURER_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'heavy_modular_frame', amount: 1 }],
   },
   alt_insulated_crystal_oscillator: {
-    id: 'alt_insulated_crystal_oscillator', label: 'Isolierter Kristalloszillator (Alt)', buildingType: 'manufacturer', cycleTime: 32, isAlternate: true,
+    id: 'alt_insulated_crystal_oscillator', label: 'Isolierter Quarzoszillator (Alt)', buildingType: 'manufacturer', cycleTime: 32, isAlternate: true,
     inputs: [{ itemId: 'quartz_crystal', amount: 10 }, { itemId: 'rubber', amount: 7 }, { itemId: 'ai_limiter', amount: 1 }],
     outputs: [{ itemId: 'crystal_oscillator', amount: 1 }],
   },
   alt_flexible_framework: {
-    id: 'alt_flexible_framework', label: 'Flexibles Rahmenwerk (Alt)', buildingType: 'manufacturer', cycleTime: 16, isAlternate: true,
+    id: 'alt_flexible_framework', label: 'Flexibles Mehrzweckgerüst (Alt)', buildingType: 'manufacturer', cycleTime: 16, isAlternate: true,
     inputs: [{ itemId: 'modular_frame', amount: 1 }, { itemId: 'steel_beam', amount: 6 }, { itemId: 'rubber', amount: 8 }],
     outputs: [{ itemId: 'versatile_framework', amount: 2 }],
   },
@@ -125,7 +125,7 @@ export const MANUFACTURER_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'battery', amount: 4 }],
   },
   alt_plastic_smart_plating: {
-    id: 'alt_plastic_smart_plating', label: 'Plastik-Intelligente-Platte (Alt)', buildingType: 'manufacturer', cycleTime: 24, isAlternate: true,
+    id: 'alt_plastic_smart_plating', label: 'Kunststoff-Beschichtung (Alt)', buildingType: 'manufacturer', cycleTime: 24, isAlternate: true,
     inputs: [{ itemId: 'reinforced_iron_plate', amount: 1 }, { itemId: 'rotor', amount: 1 }, { itemId: 'plastic', amount: 3 }],
     outputs: [{ itemId: 'smart_plating', amount: 2 }],
   },

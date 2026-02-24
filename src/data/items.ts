@@ -53,12 +53,12 @@ export const ITEMS: Record<string, ItemDef> = {
   reinforced_iron_plate: { id: 'reinforced_iron_plate', label: 'Verstärkte Eisenplatte', isFluid: false },
   modular_frame: { id: 'modular_frame', label: 'Modularer Rahmen', isFluid: false },
   rotor: { id: 'rotor', label: 'Rotor', isFluid: false },
-  smart_plating: { id: 'smart_plating', label: 'Intelligente Platte', isFluid: false },
+  smart_plating: { id: 'smart_plating', label: 'Intelligente Beschichtung', isFluid: false },
   stator: { id: 'stator', label: 'Stator', isFluid: false },
   motor: { id: 'motor', label: 'Motor', isFluid: false },
   encased_industrial_beam: { id: 'encased_industrial_beam', label: 'Ummantelter Industrieträger', isFluid: false },
   heavy_modular_frame: { id: 'heavy_modular_frame', label: 'Schwerer Modularer Rahmen', isFluid: false },
-  versatile_framework: { id: 'versatile_framework', label: 'Vielseitiges Rahmenwerk', isFluid: false },
+  versatile_framework: { id: 'versatile_framework', label: 'Mehrzweckgerüst', isFluid: false },
   automated_wiring: { id: 'automated_wiring', label: 'Automatische Verkabelung', isFluid: false },
   iron_rebar: { id: 'iron_rebar', label: 'Eisenbewehrung', isFluid: false },
   solid_biofuel: { id: 'solid_biofuel', label: 'Feste Biobrennstoff', isFluid: false },
@@ -68,19 +68,19 @@ export const ITEMS: Record<string, ItemDef> = {
 
   // === Electronics ===
   quickwire: { id: 'quickwire', label: 'Schnelldraht', isFluid: false },
-  circuit_board: { id: 'circuit_board', label: 'Leiterplatte', isFluid: false },
+  circuit_board: { id: 'circuit_board', label: 'Platine', isFluid: false },
   computer: { id: 'computer', label: 'Computer', isFluid: false },
   high_speed_connector: { id: 'high_speed_connector', label: 'Hochgeschwindigkeits-Stecker', isFluid: false },
   modular_engine: { id: 'modular_engine', label: 'Modularer Motor', isFluid: false },
   ai_limiter: { id: 'ai_limiter', label: 'KI-Begrenzer', isFluid: false },
   supercomputer: { id: 'supercomputer', label: 'Supercomputer', isFluid: false },
-  crystal_oscillator: { id: 'crystal_oscillator', label: 'Kristalloszillator', isFluid: false },
+  crystal_oscillator: { id: 'crystal_oscillator', label: 'Quarzoszillator', isFluid: false },
   radio_control_unit: { id: 'radio_control_unit', label: 'Funksteuereinheit', isFluid: false },
   adaptive_control_unit: { id: 'adaptive_control_unit', label: 'Adaptive Steuereinheit', isFluid: false },
   turbo_motor: { id: 'turbo_motor', label: 'Turbomotor', isFluid: false },
-  magnetic_field_generator: { id: 'magnetic_field_generator', label: 'Magnetfeldgenerator', isFluid: false },
+  magnetic_field_generator: { id: 'magnetic_field_generator', label: 'Magnetfeld-Generator', isFluid: false },
   sam_fluctuator: { id: 'sam_fluctuator', label: 'SAM-Fluktuator', isFluid: false },
-  assembly_director_system: { id: 'assembly_director_system', label: 'Montage-Direktor-System', isFluid: false },
+  assembly_director_system: { id: 'assembly_director_system', label: 'Montage-Leitsystem', isFluid: false },
 
   // === Quartz ===
   quartz_crystal: { id: 'quartz_crystal', label: 'Quarzkristall', isFluid: false },
@@ -119,9 +119,13 @@ export const ITEMS: Record<string, ItemDef> = {
   ai_expansion_server: { id: 'ai_expansion_server', label: 'KI-Erweiterungsserver', isFluid: false },
   alien_power_matrix: { id: 'alien_power_matrix', label: 'Alien-Energiematrix', isFluid: false },
   singularity_cell: { id: 'singularity_cell', label: 'Singularitätszelle', isFluid: false },
-  thermal_propulsion_rocket: { id: 'thermal_propulsion_rocket', label: 'Thermische Antriebsrakete', isFluid: false },
+  thermal_propulsion_rocket: { id: 'thermal_propulsion_rocket', label: 'Thermaler Raketenantrieb', isFluid: false },
   ballistic_warp_drive: { id: 'ballistic_warp_drive', label: 'Ballistischer Warpantrieb', isFluid: false },
-  biochemical_sculptor: { id: 'biochemical_sculptor', label: 'Biochemischer Bildhauer', isFluid: false },
+  biochemical_sculptor: { id: 'biochemical_sculptor', label: 'Biochemischer Modellierer', isFluid: false },
+
+  // === Industrial ===
+  plastic: { id: 'plastic', label: 'Kunststoff', isFluid: false },
+  rubber: { id: 'rubber', label: 'Gummi', isFluid: false },
 
   // === Explosives / Ammo ===
   black_powder: { id: 'black_powder', label: 'Schwarzpulver', isFluid: false },
@@ -137,7 +141,7 @@ export const ITEMS: Record<string, ItemDef> = {
   packaged_water: { id: 'packaged_water', label: 'Verpacktes Wasser', isFluid: false },
   packaged_fuel: { id: 'packaged_fuel', label: 'Verpackter Treibstoff', isFluid: false },
   packaged_oil: { id: 'packaged_oil', label: 'Verpacktes Rohöl', isFluid: false },
-  packaged_heavy_oil_residue: { id: 'packaged_heavy_oil_residue', label: 'Verpacktes Schweres Ölrückstand', isFluid: false },
+  packaged_heavy_oil_residue: { id: 'packaged_heavy_oil_residue', label: 'Verpackter Schwerölrückstand', isFluid: false },
   packaged_alumina_solution: { id: 'packaged_alumina_solution', label: 'Verpackte Aluminiumoxid-Lösung', isFluid: false },
   packaged_sulfuric_acid: { id: 'packaged_sulfuric_acid', label: 'Verpackte Schwefelsäure', isFluid: false },
   packaged_liquid_biofuel: { id: 'packaged_liquid_biofuel', label: 'Verpackter Flüssiger Biobrennstoff', isFluid: false },
@@ -150,7 +154,7 @@ export const ITEMS: Record<string, ItemDef> = {
   // === Fluids ===
   water: { id: 'water', label: 'Wasser', isFluid: true },
   crude_oil: { id: 'crude_oil', label: 'Rohöl', isFluid: true },
-  heavy_oil_residue: { id: 'heavy_oil_residue', label: 'Schweres Ölrückstand', isFluid: true },
+  heavy_oil_residue: { id: 'heavy_oil_residue', label: 'Schwerölrückstand', isFluid: true },
   fuel: { id: 'fuel', label: 'Treibstoff', isFluid: true },
   turbofuel: { id: 'turbofuel', label: 'Turbotreibstoff', isFluid: true },
   liquid_biofuel: { id: 'liquid_biofuel', label: 'Flüssiger Biobrennstoff', isFluid: true },

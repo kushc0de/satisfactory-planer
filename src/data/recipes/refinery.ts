@@ -3,7 +3,7 @@ import type { RecipeDef } from '../../types';
 export const REFINERY_RECIPES: Record<string, RecipeDef> = {
   // === Standard ===
   plastic: {
-    id: 'plastic', label: 'Plastik', buildingType: 'refinery', cycleTime: 6, isAlternate: false,
+    id: 'plastic', label: 'Kunststoff', buildingType: 'refinery', cycleTime: 6, isAlternate: false,
     inputs: [{ itemId: 'crude_oil', amount: 3 }],
     outputs: [{ itemId: 'plastic', amount: 2 }, { itemId: 'heavy_oil_residue', amount: 1 }],
   },
@@ -23,7 +23,7 @@ export const REFINERY_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'petroleum_coke', amount: 12 }],
   },
   residual_plastic: {
-    id: 'residual_plastic', label: 'Restplastik', buildingType: 'refinery', cycleTime: 6, isAlternate: false,
+    id: 'residual_plastic', label: 'Restkunststoff', buildingType: 'refinery', cycleTime: 6, isAlternate: false,
     inputs: [{ itemId: 'polymer_resin', amount: 6 }, { itemId: 'water', amount: 2 }],
     outputs: [{ itemId: 'plastic', amount: 2 }],
   },
@@ -89,7 +89,7 @@ export const REFINERY_RECIPES: Record<string, RecipeDef> = {
     outputs: [{ itemId: 'quartz_crystal', amount: 7 }],
   },
   alt_recycled_plastic: {
-    id: 'alt_recycled_plastic', label: 'Recyceltes Plastik (Alt)', buildingType: 'refinery', cycleTime: 12, isAlternate: true,
+    id: 'alt_recycled_plastic', label: 'Recycelter Kunststoff (Alt)', buildingType: 'refinery', cycleTime: 12, isAlternate: true,
     inputs: [{ itemId: 'rubber', amount: 6 }, { itemId: 'fuel', amount: 6 }],
     outputs: [{ itemId: 'plastic', amount: 12 }],
   },

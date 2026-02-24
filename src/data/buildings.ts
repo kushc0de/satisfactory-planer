@@ -18,7 +18,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   // === Extraction ===
   miner: {
     type: 'miner',
-    label: 'Förderer',
+    label: 'Miner',
     description: 'Fördert Rohstoffe aus Ressourcenknoten',
     basePower: 5,
     powerPerMk: { 1: 5, 2: 15, 3: 45 },
@@ -45,7 +45,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   oil_extractor: {
     type: 'oil_extractor',
-    label: 'Ölextraktor',
+    label: 'Ölpumpe',
     description: 'Extrahiert Rohöl aus Öl-Knoten',
     basePower: 40,
     maxMkLevel: 1,
@@ -60,7 +60,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   // === Smelting ===
   smelter: {
     type: 'smelter',
-    label: 'Schmelze',
+    label: 'Schmelzofen',
     description: 'Schmilzt Erze zu Barren',
     basePower: 4,
     maxMkLevel: 1,
@@ -101,7 +101,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   assembler: {
     type: 'assembler',
-    label: 'Montierer',
+    label: 'Fabrikator',
     description: 'Kombiniert zwei Materialien',
     basePower: 15,
     maxMkLevel: 1,
@@ -114,7 +114,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   manufacturer: {
     type: 'manufacturer',
-    label: 'Hersteller',
+    label: 'Manufaktor',
     description: 'Fertigt komplexe Bauteile aus bis zu 4 Materialien',
     basePower: 55,
     maxMkLevel: 1,
@@ -153,7 +153,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   packager: {
     type: 'packager',
-    label: 'Verpackungsanlage',
+    label: 'Umfüllanlage',
     description: 'Verpackt oder entpackt Flüssigkeiten',
     basePower: 10,
     maxMkLevel: 1,
@@ -171,7 +171,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   blender: {
     type: 'blender',
-    label: 'Mischmaschine',
+    label: 'Mixer',
     description: 'Mischt Flüssigkeiten und Feststoffe',
     basePower: 75,
     maxMkLevel: 1,
@@ -250,7 +250,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   // === Logistics ===
   splitter: {
     type: 'splitter',
-    label: 'Verteiler',
+    label: 'Förderbandsplitter',
     description: 'Verteilt Eingang auf drei Ausgänge',
     basePower: 0,
     maxMkLevel: 1,
@@ -268,7 +268,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   merger: {
     type: 'merger',
-    label: 'Zusammenführung',
+    label: 'Förderband-Fusionator',
     description: 'Führt drei Eingänge zu einem Ausgang zusammen',
     basePower: 0,
     maxMkLevel: 1,
@@ -286,7 +286,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   awesome_sink: {
     type: 'awesome_sink',
-    label: 'AWESOME-Senke',
+    label: 'AWESOME-Schredder',
     description: 'Vernichtet Items und generiert Coupons',
     basePower: 30,
     maxMkLevel: 1,
@@ -299,7 +299,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   pipeline_junction: {
     type: 'pipeline_junction',
-    label: 'Rohrkreuzung',
+    label: 'Pipeline-Kreuzung',
     description: 'Verbindet bis zu 4 Pipelines',
     basePower: 0,
     maxMkLevel: 1,
@@ -319,7 +319,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   // === Storage ===
   storage_container: {
     type: 'storage_container',
-    label: 'Lagerbehälter',
+    label: 'Lagercontainer',
     description: 'Speichert feste Items',
     basePower: 0,
     maxMkLevel: 1,
@@ -332,7 +332,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   fluid_buffer: {
     type: 'fluid_buffer',
-    label: 'Flüssigkeitspuffer',
+    label: 'Flüssigkeitsspeicher',
     description: 'Speichert Flüssigkeiten',
     basePower: 0,
     maxMkLevel: 1,
@@ -347,7 +347,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   // === Power Generators ===
   coal_generator: {
     type: 'coal_generator',
-    label: 'Kohlekraftwerk',
+    label: 'Kohlegenerator',
     description: 'Erzeugt 75 MW Strom aus Kohle und Wasser',
     basePower: 75,
     maxMkLevel: 1,
@@ -373,7 +373,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   nuclear_power_plant: {
     type: 'nuclear_power_plant',
-    label: 'Kernkraftwerk',
+    label: 'Atomkraftwerk',
     description: 'Erzeugt 2500 MW Strom aus Brennstäben und Wasser',
     basePower: 2500,
     maxMkLevel: 1,
@@ -386,7 +386,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   biomass_burner: {
     type: 'biomass_burner',
-    label: 'Biomassebrenner',
+    label: 'Biomassegenerator',
     description: 'Erzeugt 30 MW Strom aus Biomasse',
     basePower: 30,
     maxMkLevel: 1,
@@ -399,7 +399,7 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   },
   geothermal_generator: {
     type: 'geothermal_generator',
-    label: 'Geothermalkraftwerk',
+    label: 'Geothermie-Generator',
     description: 'Erzeugt ~200 MW Strom aus Geothermie-Quellen',
     basePower: 200,
     maxMkLevel: 1,
