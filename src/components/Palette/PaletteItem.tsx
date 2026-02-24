@@ -27,15 +27,17 @@ export default function PaletteItem({ building }: Props) {
     <button
       onClick={handleClick}
       className={`
-        w-full flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer
-        border transition-all duration-150 text-left
+        w-full flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer
+        border transition-all duration-150 text-left h-[52px]
         ${isActive
           ? 'border-amber-500 bg-amber-500/20 shadow-[0_0_8px_rgba(245,158,11,0.2)]'
           : 'border-transparent hover:border-amber-500/40 hover:bg-amber-500/10'}
       `}
     >
-      <BuildingIcon type={building.type} size={36} />
-      <div className="min-w-0">
+      <div className="w-9 h-9 flex items-center justify-center flex-shrink-0">
+        <BuildingIcon type={building.type} size={32} />
+      </div>
+      <div className="min-w-0 flex-1">
         <div className="text-sm font-semibold text-gray-100 truncate">
           {building.label}
           {isActive && (

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { DndContext, type DragEndEvent } from '@dnd-kit/core';
+import { DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
 import { createSnapModifier } from '@dnd-kit/modifiers';
 import { useStore } from '../../store/store';
 import { pixelToGrid, GRID_SIZE } from '../../utils/grid';
@@ -15,6 +15,12 @@ const modifiers = [snapModifier];
 export default function App() {
   const moveBuilding = useStore((s) => s.moveBuilding);
   const buildings = useStore((s) => s.buildings);
+
+  // Require 5px movement before drag starts, so simple clicks aren't swallowed
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const sensors = useSensors(pointerSensor);
   // ESC key: priority-based cancellation; R key: rotate selected building
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -62,7 +68,7 @@ export default function App() {
   };
 
   return (
-    <DndContext modifiers={modifiers} onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} modifiers={modifiers} onDragEnd={handleDragEnd}>
       <div className="h-screen w-screen flex flex-col overflow-hidden bg-[#0a0a15]">
         <Toolbar />
         <div className="flex flex-1 overflow-hidden">

@@ -26,7 +26,7 @@ export default function BeltPaletteItem({ belt }: Props) {
       onClick={handleClick}
       className={`
         w-full flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer
-        border transition-all duration-150 text-left
+        border transition-all duration-150 text-left h-[52px]
         ${isActive
           ? 'border-amber-500 bg-amber-500/20 shadow-[0_0_8px_rgba(245,158,11,0.2)]'
           : 'border-transparent hover:border-amber-500/40 hover:bg-amber-500/10'}
