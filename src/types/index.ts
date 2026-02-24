@@ -210,6 +210,14 @@ export interface SolverStep {
   outputRates: ProductionRate[];
   powerPerBuilding: number;
   totalPower: number;
+  /** True for auto-generated extractor steps (miner, water_extractor, oil_extractor) */
+  isExtractor?: boolean;
+  /** The ore/resource type for extractor steps */
+  oreType?: string;
+  /** Miner MK level for miner extractor steps */
+  minerMkLevel?: MkLevel;
+  /** Purity for extractor steps */
+  purity?: Purity;
 }
 
 export interface SolverResult {
@@ -218,4 +226,30 @@ export interface SolverResult {
   totalPower: number;
   totalBuildings: number;
   excess: ProductionRate[];
+}
+
+// === Layout Transfer Types ===
+
+export interface PlacementInstruction {
+  buildingType: BuildingType;
+  gridX: number;
+  gridY: number;
+  recipeId: string | null;
+  overclock: number;
+  mkLevel: MkLevel;
+  oreType: string | null;
+  purity: Purity;
+  /** Index of the SolverStep this placement belongs to */
+  stepIndex: number;
+  /** Instance index within the step (0..buildingCountCeil-1) */
+  instanceIndex: number;
+}
+
+export interface ConnectionInstruction {
+  fromPlacementIndex: number;
+  fromPortIndex: number;
+  toPlacementIndex: number;
+  toPortIndex: number;
+  beltMk: BeltMk;
+  pipeMk: PipeMk;
 }
