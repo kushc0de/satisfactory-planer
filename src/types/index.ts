@@ -197,6 +197,19 @@ export interface BuildingProduction {
   power: number; // MW (positive = consumption, negative = production)
 }
 
+// === Resource Config (per-resource miner settings) ===
+
+export interface ResourceConfig {
+  itemId: string;
+  demandRate: number;
+  minerMkLevel: MkLevel;
+  purity: Purity;
+  outputPerMiner: number;
+  minerCount: number;
+  clockPercent: number;
+  buildingType: BuildingType;
+}
+
 // === Solver Types ===
 
 export interface SolverStep {

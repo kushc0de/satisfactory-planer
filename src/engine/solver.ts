@@ -1,8 +1,7 @@
-import type { SolverResult, SolverStep, ProductionRate, BuildingType, MkLevel, Purity } from '../types';
+import type { SolverResult, SolverStep, ProductionRate } from '../types';
 import { RECIPES } from '../data/recipes/index';
 import { BUILDINGS } from '../data/buildings';
 import { ITEMS } from '../data/items';
-import { MINER_BASE_RATES, PURITY_MULTIPLIERS } from '../data/purity';
 import { calcOverclockedPower } from './overclock';
 
 /** Raw resources that don't need recipes to produce */
@@ -58,10 +57,6 @@ export interface SolverOptions {
   overrides?: Map<string, string>;
   given?: Map<string, number>;
   strategy?: OverclockStrategy;
-  /** MK level for miners (default: 1) */
-  minerMkLevel?: MkLevel;
-  /** Purity for resource nodes (default: 'normal') */
-  minerPurity?: Purity;
 }
 
 /**
@@ -231,79 +226,7 @@ export function solve(options: SolverOptions): SolverResult {
     processed.add(itemToProcess);
   }
 
-  // --- Generate extractor steps for raw resources ---
-  const minerMk = options.minerMkLevel ?? 1;
-  const minerPurity = options.minerPurity ?? 'normal';
-
-  for (const [itemId, demandRate] of rawResources) {
-    if (demandRate <= 0.001) continue;
-
-    const item = ITEMS[itemId];
-    let buildingType: BuildingType;
-    let outputPerBuilding: number;
-    let basePower: number;
-    let oreType: string | null = null;
-
-    if (itemId === 'water') {
-      // Water extractor: 120 m³/min base, no purity
-      buildingType = 'water_extractor';
-      outputPerBuilding = 120;
-      basePower = BUILDINGS.water_extractor.basePower;
-    } else if (itemId === 'crude_oil') {
-      // Oil extractor: 120 m³/min base × purity
-      buildingType = 'oil_extractor';
-      outputPerBuilding = 120 * PURITY_MULTIPLIERS[minerPurity];
-      basePower = BUILDINGS.oil_extractor.basePower;
-    } else if (itemId === 'nitrogen_gas') {
-      // Nitrogen gas uses resource well extractor — treat like oil extractor
-      buildingType = 'oil_extractor';
-      outputPerBuilding = 120 * PURITY_MULTIPLIERS[minerPurity];
-      basePower = BUILDINGS.oil_extractor.basePower;
-      oreType = 'nitrogen_gas';
-    } else if (item?.isFluid) {
-      // Other fluids that ended up as raw — skip (shouldn't happen normally)
-      continue;
-    } else {
-      // Solid ore → miner
-      buildingType = 'miner';
-      outputPerBuilding = MINER_BASE_RATES[minerMk] * PURITY_MULTIPLIERS[minerPurity];
-      const mkPower = BUILDINGS.miner.powerPerMk;
-      basePower = mkPower ? mkPower[minerMk] : BUILDINGS.miner.basePower;
-      oreType = itemId;
-    }
-
-    const buildingCount = demandRate / outputPerBuilding;
-    const buildingCountCeil = Math.ceil(buildingCount);
-
-    let clockPercent: number;
-    if (strategy === 'exact' && buildingCountCeil > 0) {
-      clockPercent = (buildingCount / buildingCountCeil) * 100;
-    } else {
-      clockPercent = 100;
-    }
-
-    const actualOutput = outputPerBuilding * (clockPercent / 100) * buildingCountCeil;
-    const powerPerBuilding = calcOverclockedPower(basePower, clockPercent);
-
-    steps.push({
-      itemId,
-      recipeId: '', // Extractors have no recipe
-      buildingType,
-      buildingCount,
-      buildingCountCeil,
-      clockPercent,
-      inputRates: [],
-      outputRates: [{ itemId, rate: actualOutput }],
-      powerPerBuilding,
-      totalPower: powerPerBuilding * buildingCountCeil,
-      isExtractor: true,
-      oreType: oreType ?? (buildingType === 'water_extractor' ? 'water' : itemId),
-      minerMkLevel: buildingType === 'miner' ? minerMk : undefined,
-      purity: buildingType === 'water_extractor' ? undefined : minerPurity,
-    });
-  }
-
-  // Recalculate totals including extractors
+  // Totals (extractors are now generated separately in SolverPanel from ResourceConfig)
   const totalPower = steps.reduce((sum, s) => sum + s.totalPower, 0);
   const totalBuildings = steps.reduce((sum, s) => sum + s.buildingCountCeil, 0);
 

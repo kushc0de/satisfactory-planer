@@ -173,7 +173,7 @@ export function generateConnections(
  * Find the output port index (among output ports only) for a given item on a building type.
  * Port index is relative to output ports (0-based), matching the store's convention.
  */
-function findOutputPortIndex(
+export function findOutputPortIndex(
   buildingType: string,
   itemId: string,
   step: { outputRates: { itemId: string }[]; isExtractor?: boolean },
@@ -217,7 +217,7 @@ function findOutputPortIndex(
 /**
  * Find the input port index (among input ports only) for a given item on a building type.
  */
-function findInputPortIndex(
+export function findInputPortIndex(
   buildingType: string,
   itemId: string,
   step: { inputRates: { itemId: string }[]; isExtractor?: boolean },
