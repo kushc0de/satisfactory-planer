@@ -90,31 +90,29 @@ export default function ConnectionLine({ connection, buildings }: Props) {
         strokeWidth={isSelected ? 3 : 2}
         strokeDasharray={bottleneck.isBottleneck ? '6 3' : isPipe ? '8 4' : undefined}
       />
-      {/* Label */}
-      {isSelected && (
-        <g>
-          <rect
-            x={midX - 30}
-            y={midY - 10}
-            width="60"
-            height="20"
-            rx="4"
-            fill="#1a1a2e"
-            stroke={bottleneck.isBottleneck ? '#EF4444' : selectedColor}
-            strokeWidth="1"
-          />
-          <text
-            x={midX}
-            y={midY + 4}
-            textAnchor="middle"
-            fill={bottleneck.isBottleneck ? '#EF4444' : selectedColor}
-            fontSize="9"
-            fontFamily="monospace"
-          >
-            {mkLabel}
-          </text>
-        </g>
-      )}
+      {/* Label — always visible, prominent when selected */}
+      <g opacity={isSelected ? 1 : 0.5}>
+        <rect
+          x={midX - 30}
+          y={midY - 10}
+          width="60"
+          height="20"
+          rx="4"
+          fill="#1a1a2e"
+          stroke={bottleneck.isBottleneck ? '#EF4444' : isSelected ? selectedColor : normalColor}
+          strokeWidth="1"
+        />
+        <text
+          x={midX}
+          y={midY + 4}
+          textAnchor="middle"
+          fill={bottleneck.isBottleneck ? '#EF4444' : isSelected ? selectedColor : normalColor}
+          fontSize={isSelected ? '9' : '8'}
+          fontFamily="monospace"
+        >
+          {mkLabel}
+        </text>
+      </g>
       {/* Bottleneck warning */}
       {bottleneck.isBottleneck && (
         <g>

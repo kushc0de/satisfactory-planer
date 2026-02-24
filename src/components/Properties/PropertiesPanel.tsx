@@ -1,5 +1,5 @@
 import { useStore } from '../../store/store';
-import { useSelectedBuilding } from '../../store/selectors';
+import { useSelectedBuilding, useSelectedBuildings } from '../../store/selectors';
 import { BUILDINGS } from '../../data/buildings';
 import { calcBuildingProduction } from '../../engine/production';
 import { calcBuildingPower } from '../../engine/power';
@@ -17,6 +17,7 @@ const ROTATIONS: Rotation[] = [0, 90, 180, 270];
 
 export default function PropertiesPanel() {
   const building = useSelectedBuilding();
+  const selectedBuildings = useSelectedBuildings();
   const selectedConnectionId = useStore((s) => s.selectedConnectionId);
   const setMkLevel = useStore((s) => s.setMkLevel);
   const setOverclock = useStore((s) => s.setOverclock);
@@ -36,6 +37,53 @@ export default function PropertiesPanel() {
         </div>
         <div className="flex-1 overflow-y-auto p-4">
           <ConnectionProperties />
+        </div>
+      </aside>
+    );
+  }
+
+  // Multi-selection: show summary
+  if (selectedBuildings.length > 1) {
+    const handleDeleteAll = () => {
+      for (const b of selectedBuildings) {
+        removeConnectionsForBuilding(b.id);
+        removeBuilding(b.id);
+      }
+      clearSelection();
+    };
+
+    return (
+      <aside className="w-[300px] flex-shrink-0 bg-[#0f0f1a] border-l border-gray-800/80 flex flex-col h-full">
+        <div className="px-4 py-3 border-b border-gray-800/80">
+          <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider">Eigenschaften</h2>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="text-center py-6">
+            <div className="text-3xl font-bold text-amber-400 mb-1">{selectedBuildings.length}</div>
+            <div className="text-sm text-gray-400">Gebäude ausgewählt</div>
+          </div>
+
+          <div className="space-y-1">
+            {selectedBuildings.map((b) => {
+              const d = BUILDINGS[b.type];
+              return (
+                <div key={b.id} className="flex items-center gap-2 bg-gray-800/50 rounded px-2 py-1.5">
+                  <BuildingIcon type={b.type} size={20} />
+                  <span className="text-xs text-gray-300 truncate">{d.label}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="h-px bg-gray-800" />
+
+          <button
+            onClick={handleDeleteAll}
+            className="w-full py-2 text-sm font-medium rounded-md border border-red-500/40 text-red-400
+              hover:bg-red-500/10 transition-colors"
+          >
+            Alle {selectedBuildings.length} Gebäude löschen
+          </button>
         </div>
       </aside>
     );

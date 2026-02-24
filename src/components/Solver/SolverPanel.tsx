@@ -58,16 +58,22 @@ export default function SolverPanel({ onClose }: { onClose: () => void }) {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-1.5 text-sm text-gray-200 mb-1 focus:outline-none focus:border-amber-500"
             />
-            <select
-              value={targetItem}
-              onChange={(e) => setTargetItem(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-amber-500"
-              size={5}
-            >
+            <div className="w-full bg-gray-800 border border-gray-700 rounded-md overflow-y-auto max-h-[160px]">
               {filteredItems.map((item) => (
-                <option key={item.id} value={item.id}>{item.label}</option>
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setTargetItem(item.id)}
+                  className={`w-full text-left px-3 py-1.5 text-sm transition-colors ${
+                    targetItem === item.id
+                      ? 'bg-amber-500/20 text-amber-400'
+                      : 'text-gray-200 hover:bg-gray-700'
+                  }`}
+                >
+                  {item.label}
+                </button>
               ))}
-            </select>
+            </div>
           </div>
           <div className="flex gap-3">
             <div className="flex-1">

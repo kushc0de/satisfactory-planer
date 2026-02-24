@@ -10,11 +10,23 @@ export function usePlacementMode(): PlacementMode | null {
   return useStore((s) => s.placementMode);
 }
 
+/** Returns first selected building (for properties panel single-edit) */
 export function useSelectedBuilding(): PlacedBuilding | null {
   return useStore((s) => {
-    if (!s.selectedBuildingId) return null;
-    return s.buildings.find((b) => b.id === s.selectedBuildingId) ?? null;
+    if (s.selectedBuildingIds.length === 0) return null;
+    return s.buildings.find((b) => b.id === s.selectedBuildingIds[0]) ?? null;
   });
+}
+
+/** Returns all selected buildings */
+export function useSelectedBuildings(): PlacedBuilding[] {
+  return useStore(
+    useShallow((s) =>
+      s.selectedBuildingIds
+        .map((id) => s.buildings.find((b) => b.id === id))
+        .filter((b): b is PlacedBuilding => b != null),
+    ),
+  );
 }
 
 export function useTotalPower(): number {

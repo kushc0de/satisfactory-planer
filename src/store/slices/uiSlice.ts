@@ -1,14 +1,25 @@
 import type { StateCreator } from 'zustand';
-import type { ConnectionDraft, PlacementMode, Rotation } from '../../types';
+import type { BuildingType, ConnectionDraft, PlacementMode, Rotation } from '../../types';
 
 const ROTATION_CYCLE: Rotation[] = [0, 90, 180, 270];
 
+export interface BuildingClipboard {
+  buildingType: BuildingType;
+  recipeId: string | null;
+  overclock: number;
+  mkLevel: number;
+  purity: string;
+  oreType: string | null;
+}
+
 export interface UiSlice {
-  selectedBuildingId: string | null;
+  selectedBuildingIds: string[];
   selectedConnectionId: string | null;
   connectionDraft: ConnectionDraft | null;
   placementMode: PlacementMode | null;
-  selectBuilding: (id: string | null) => void;
+  clipboard: BuildingClipboard | null;
+  selectBuilding: (id: string) => void;
+  toggleBuildingSelection: (id: string) => void;
   selectConnection: (id: string | null) => void;
   startConnectionDraft: (fromBuildingId: string, fromPortIndex: number) => void;
   cancelConnectionDraft: () => void;
@@ -16,19 +27,30 @@ export interface UiSlice {
   setPlacementMode: (mode: PlacementMode | null) => void;
   cancelPlacement: () => void;
   cyclePlacementRotation: () => void;
+  setClipboard: (clip: BuildingClipboard) => void;
 }
 
 export const createUiSlice: StateCreator<UiSlice, [], [], UiSlice> = (set) => ({
-  selectedBuildingId: null,
+  selectedBuildingIds: [],
   selectedConnectionId: null,
   connectionDraft: null,
   placementMode: null,
+  clipboard: null,
 
   selectBuilding: (id) =>
-    set({ selectedBuildingId: id, selectedConnectionId: null }),
+    set({ selectedBuildingIds: [id], selectedConnectionId: null }),
+
+  toggleBuildingSelection: (id) =>
+    set((state) => {
+      const ids = state.selectedBuildingIds;
+      if (ids.includes(id)) {
+        return { selectedBuildingIds: ids.filter((x) => x !== id) };
+      }
+      return { selectedBuildingIds: [...ids, id], selectedConnectionId: null };
+    }),
 
   selectConnection: (id) =>
-    set({ selectedConnectionId: id, selectedBuildingId: null }),
+    set({ selectedConnectionId: id, selectedBuildingIds: [] }),
 
   startConnectionDraft: (fromBuildingId, fromPortIndex) =>
     set({ connectionDraft: { fromBuildingId, fromPortIndex } }),
@@ -36,7 +58,7 @@ export const createUiSlice: StateCreator<UiSlice, [], [], UiSlice> = (set) => ({
   cancelConnectionDraft: () => set({ connectionDraft: null }),
 
   clearSelection: () =>
-    set({ selectedBuildingId: null, selectedConnectionId: null, connectionDraft: null }),
+    set({ selectedBuildingIds: [], selectedConnectionId: null, connectionDraft: null }),
 
   setPlacementMode: (mode) =>
     set({ placementMode: mode, connectionDraft: null }),
@@ -56,4 +78,6 @@ export const createUiSlice: StateCreator<UiSlice, [], [], UiSlice> = (set) => ({
         },
       };
     }),
+
+  setClipboard: (clip) => set({ clipboard: clip }),
 });

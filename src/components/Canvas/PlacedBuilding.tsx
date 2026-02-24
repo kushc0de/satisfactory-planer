@@ -2,6 +2,8 @@ import { useState, useCallback } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import type { PlacedBuilding as PlacedBuildingType } from '../../types';
 import { BUILDINGS } from '../../data/buildings';
+import { RECIPES } from '../../data/recipes/index';
+import { ITEMS } from '../../data/items';
 import { gridToPixel } from '../../utils/grid';
 import { getVisualDimensions, getInputPorts, getOutputPorts } from '../../utils/ports';
 import { useStore } from '../../store/store';
@@ -17,10 +19,11 @@ interface Props {
 }
 
 export default function PlacedBuilding({ building }: Props) {
-  const selectedId = useStore((s) => s.selectedBuildingId);
+  const selectedIds = useStore((s) => s.selectedBuildingIds);
   const selectBuilding = useStore((s) => s.selectBuilding);
+  const toggleBuildingSelection = useStore((s) => s.toggleBuildingSelection);
   const placementMode = usePlacementMode();
-  const isSelected = selectedId === building.id;
+  const isSelected = selectedIds.includes(building.id);
   const def = BUILDINGS[building.type];
   const rotation = building.rotation;
 
@@ -55,6 +58,18 @@ export default function PlacedBuilding({ building }: Props) {
   const inputPorts = getInputPorts(def);
   const outputPorts = getOutputPorts(def);
 
+  // Determine display label: recipe name or ore type takes priority
+  let mainLabel = def.label;
+  let subLabel: string | null = null;
+
+  if (building.recipeId && RECIPES[building.recipeId]) {
+    mainLabel = RECIPES[building.recipeId].label;
+    subLabel = def.label;
+  } else if (building.type === 'miner' && building.oreType && ITEMS[building.oreType]) {
+    mainLabel = ITEMS[building.oreType].label;
+    subLabel = def.label;
+  }
+
   const handleContextMenu = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
@@ -79,7 +94,11 @@ export default function PlacedBuilding({ building }: Props) {
         `}
         onClick={(e) => {
           e.stopPropagation();
-          selectBuilding(building.id);
+          if (e.ctrlKey || e.metaKey) {
+            toggleBuildingSelection(building.id);
+          } else {
+            selectBuilding(building.id);
+          }
         }}
         onContextMenu={handleContextMenu}
         {...listeners}
@@ -87,8 +106,13 @@ export default function PlacedBuilding({ building }: Props) {
       >
         <BuildingIcon type={building.type} size={Math.min(width, height) * 0.5} />
         <span className="text-[10px] font-medium text-gray-300 mt-0.5 truncate max-w-full px-1">
-          {def.label}
+          {mainLabel}
         </span>
+        {subLabel && (
+          <span className="text-[8px] text-gray-500 truncate max-w-full px-1 -mt-0.5">
+            {subLabel}
+          </span>
+        )}
 
         {/* Rotation indicator */}
         {rotation !== 0 && (
