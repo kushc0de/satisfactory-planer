@@ -3,8 +3,12 @@ import { useShallow } from 'zustand/react/shallow';
 import { calcBuildingPower, calcTotalPower } from '../engine/power';
 import { calcBuildingProduction } from '../engine/production';
 import { findAllBottlenecks } from '../engine/throughput';
-import type { PlacedBuilding, BuildingProduction } from '../types';
+import type { PlacedBuilding, BuildingProduction, PlacementMode } from '../types';
 import { BUILDINGS } from '../data/buildings';
+
+export function usePlacementMode(): PlacementMode | null {
+  return useStore((s) => s.placementMode);
+}
 
 export function useSelectedBuilding(): PlacedBuilding | null {
   return useStore((s) => {

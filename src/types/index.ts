@@ -98,6 +98,10 @@ export interface FactoryLayout {
 
 // === UI State ===
 
+export type PlacementMode =
+  | { kind: 'building'; buildingType: BuildingType }
+  | { kind: 'belt'; beltMk: BeltMk };
+
 export interface ConnectionDraft {
   fromBuildingId: string;
   fromPortIndex: number;

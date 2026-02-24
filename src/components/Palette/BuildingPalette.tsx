@@ -1,5 +1,10 @@
 import { BUILDING_LIST } from '../../data/buildings';
+import { BELTS } from '../../data/belts';
+import type { BeltMk } from '../../types';
 import PaletteItem from './PaletteItem';
+import BeltPaletteItem from './BeltPaletteItem';
+
+const BELT_LIST = ([1, 2, 3, 4, 5, 6] as BeltMk[]).map((mk) => BELTS[mk]);
 
 export default function BuildingPalette() {
   return (
@@ -11,9 +16,19 @@ export default function BuildingPalette() {
         {BUILDING_LIST.map((b) => (
           <PaletteItem key={b.type} building={b} />
         ))}
+
+        {/* Belt section */}
+        <div className="pt-3 mt-2 border-t border-gray-800/60">
+          <div className="px-2 pb-2">
+            <h3 className="text-xs font-bold text-amber-500/80 uppercase tracking-wider">Förderband</h3>
+          </div>
+          {BELT_LIST.map((belt) => (
+            <BeltPaletteItem key={belt.mk} belt={belt} />
+          ))}
+        </div>
       </div>
       <div className="px-4 py-2 border-t border-gray-800/80">
-        <p className="text-xs text-gray-600">Ziehen um zu platzieren</p>
+        <p className="text-xs text-gray-600">Klicken um zu platzieren</p>
       </div>
     </aside>
   );
